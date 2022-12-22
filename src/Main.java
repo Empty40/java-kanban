@@ -1,3 +1,9 @@
+import managers.Manager;
+import models.Epic;
+import models.Subtask;
+import models.Task;
+
+import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
 
@@ -15,11 +21,11 @@ public class Main {
                 int taskType = scanner.nextInt();
 
                 if (taskType == 1) {
-                    manager.showAllTask();
+                    System.out.println(manager.showAllTask());
                 } else if (taskType == 2) {
-                    manager.showAllEpic();
+                    System.out.println(manager.showAllEpic());
                 } else if (taskType == 3) {
-                    manager.showAllSubtask();
+                    System.out.println(manager.showAllSubtask());
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -48,11 +54,11 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    System.out.println(manager.showTaskId(id));
+                    System.out.println(manager.showTaskById(id));
                 } else if (taskType == 2) {
-                    manager.showEpicId(id);
+                    manager.showEpicById(id);
                 } else if (taskType == 3) {
-                    manager.showSubtaskId(id);
+                    manager.showSubtaskById(id);
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -81,12 +87,11 @@ public class Main {
                 } else {
                     System.out.println("В рамках какого эпика выполняется задача?");
                     int subtaskEpicId = scanner.nextInt();
+                    HashMap<Integer, Epic> epicList = manager.getEpicList();
                     Subtask subtask = new Subtask(taskName, taskDescription, "NEW", subtaskEpicId);
+                    Epic subtaskIdInEpic = epicList.get(subtaskEpicId);
+                    subtaskIdInEpic.setSubtaskId(manager.getTaskId());
                     manager.newSubtask(subtask);
-                    Epic test = manager.epicList.get(subtaskEpicId);
-                    test.subtaskId.add(manager.taskId);
-                    System.out.println("Задаче присвоен идентификатор " + manager.taskId);
-                    manager.taskId++;
                 }
 
             } else if (command == 5) {
@@ -111,24 +116,27 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    Task task = manager.tasks.get(id);
-                    task.taskName = taskName;
-                    task.taskDescription = taskDescription;
-                    task.taskStatus = taskStatus;
+                    HashMap<Integer, Task> tasksList = manager.getTasks();
+                    Task task = tasksList.get(id);
+                    task.setTaskName(taskName);
+                    task.setTaskDescription(taskDescription);
+                    task.setTaskStatus(taskStatus);
                     manager.updateTask(task);
 
                 } else if (taskType == 2) {
-                    Epic epic = manager.epicList.get(id);
-                    epic.taskName = taskName;
-                    epic.taskDescription = taskDescription;
-                    epic.taskStatus = taskStatus;
+                    HashMap<Integer, Epic> epicList = manager.getEpicList();
+                    Epic epic = epicList.get(id);
+                    epic.setTaskName(taskName);
+                    epic.setTaskDescription(taskDescription);
+                    epic.setTaskStatus(taskStatus);
                     manager.updateEpic(epic);
 
                 } else if (taskType == 3) {
-                    Subtask subtask = manager.subtaskList.get(id);
-                    subtask.taskName = taskName;
-                    subtask.taskDescription = taskDescription;
-                    subtask.taskStatus = taskStatus;
+                    HashMap<Integer, Subtask> subtaskList = manager.getSubtaskList();
+                    Subtask subtask = subtaskList.get(id);
+                    subtask.setTaskName(taskName);
+                    subtask.setTaskDescription(taskDescription);
+                    subtask.setTaskStatus(taskStatus);
                     manager.updateSubtask(subtask);
 
                 } else {

@@ -1,5 +1,13 @@
+package models;
+
 public class Subtask extends Epic {
-    int subtaskEpicId;
+    private int subtaskEpicId;
+
+    public int getSubtaskEpicId() {
+        return subtaskEpicId;
+    }
+
+
 
     public Subtask(String taskName, String taskDescription, String taskStatus, int subtaskEpicId) {
         super(taskName, taskDescription, taskStatus);
@@ -7,10 +15,10 @@ public class Subtask extends Epic {
     }
     @Override
     public String toString() {
-        return "Subtask{" +
-                "subtaskName='" + taskName + '\'' +
-                ", subtaskDescription='" + taskDescription + '\'' +
-                ", subtaskStatus=" + taskStatus + '\'' +
+        return "models.Subtask{" +
+                "subtaskName='" + getTaskName() + '\'' +
+                ", subtaskDescription='" + getTaskDescription() + '\'' +
+                ", subtaskStatus=" + getTaskStatus() + '\'' +
                 ", subtaskId=" + super.getTaskId() +
                 '}';
     }
