@@ -9,8 +9,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Manager {
+
+    private int taskId = 1;
+
     protected HashMap<Integer, Task> tasks = new HashMap<>();
+
     protected HashMap<Integer, Epic> epicList = new HashMap<>();
+
     protected HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
     public HashMap<Integer, Task> getTasks() {
@@ -25,33 +30,31 @@ public class Manager {
         return subtaskList;
     }
 
-    private int taskId = 1;
-
     public int getTaskId() {
         return taskId;
     }
-// Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
 
-    //    Методы для каждого из типа задач(Задача/Эпик/Подзадача):
-    public String showAllTask() { //    Получение списка всех задач.
-        ArrayList<Task> taskPrint = new ArrayList<>();
-        for (Task taskValue : tasks.values()) {
+    // Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
+    // Методы для каждого из типа задач(Задача/Эпик/Подзадача):
+    public ArrayList<Task> showAllTask() { //    Получение списка всех задач.
+        ArrayList<Task> taskPrint = new ArrayList<>(); // Понял свою ошибку, возвращал не сам список, а toString()
+        for (Task taskValue : tasks.values()) { // теперь, надеюсь, сделал верный возврат списка
             taskPrint.add(taskValue);
-        } return taskPrint.toString();
+        } return taskPrint;
     }
 
-    public String showAllEpic() { //    Получение списка всех задач.
-        ArrayList<Task> epicPrint = new ArrayList<>();
+    public ArrayList<Epic> showAllEpic() { //    Получение списка всех задач.
+        ArrayList<Epic> epicPrint = new ArrayList<>();
         for (Epic epicValue : epicList.values()) {
             epicPrint.add(epicValue);
-        } return epicPrint.toString();
+        } return epicPrint;
     }
 
-    public String showAllSubtask() { //    Получение списка всех задач.
-        ArrayList<Task> subtaskPrint = new ArrayList<>();
+    public ArrayList<Subtask> showAllSubtask() { //    Получение списка всех задач.
+        ArrayList<Subtask> subtaskPrint = new ArrayList<>();
         for (Subtask subtaskValue : subtaskList.values()) {
             subtaskPrint.add(subtaskValue);
-        } return subtaskPrint.toString();
+        } return subtaskPrint;
     }
 
     public void deleteAllTask() { //    Удаление всех задач.
@@ -59,8 +62,8 @@ public class Manager {
     }
 
     public void deleteAllEpic() { //    Удаление всех Эпиков.
-        deleteAllSubtask(); // Я поменял местами методы, чтобы сначала выполнялась полная очистка подзадач и айдишников
-        epicList.clear(); // подзадач в Эпике, а уже после происходила очистка Хешмапы эпиков
+        epicList.clear(); // Тут тоже понял, мы же удаляем список эпиков и вместе с этим удаляются и список айдишников
+        subtaskList.clear(); // подзадач
     }
 
     public void deleteAllSubtask() { //    Удаление всех Подзадач.
@@ -68,8 +71,7 @@ public class Manager {
             int epicIndex = index.getSubtaskEpicId();
             for (int i = 0; i < epicList.size(); i++) {
                 Epic subtaskInEpicForDelete = epicList.get(epicIndex);
-                ArrayList<Integer> SubtaskIdSize = subtaskInEpicForDelete.getSubtaskId();
-                SubtaskIdSize.clear();
+                subtaskInEpicForDelete.deleteListSubtaskId();
             }
         }
         subtaskList.clear();
@@ -112,39 +114,49 @@ public class Manager {
     }
 
     public void updateTask(Task task) { //    Обновление. Новая версия объекта с верным идентификатором
-        int taskIndex = task.getTaskId();
-        tasks.put(taskIndex, task);
-
+        if (!tasks.containsKey(task.getTaskId())) {
+            System.out.println("Такой задачи нет в списке");
+        } else {
+            int taskIndex = task.getTaskId();
+            tasks.put(taskIndex, task);
+        }
     }
+    /*В мейн анологичный по сути код для того, чтобы исключение не вылезало во врем проверки, в случае если отрабатывать
+    исключение нужно не таким образом, то пожалуйста подскажите как обработать исключение, return тут не срабатывает*/
 
-    // Хочу уточнить, как мы сможем передать сюда новую задачу, если в main мы сначала запрашиваем идентификатор задачи?
-    // Я может просто ошибаюсь, но тогда прошу, обьясните. Исходя из логики ТЗ:
-    // "Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра."
-    // Мы же объект передаем с "верным идентификатором" что подразумевает, что мы уже знаем что данный объект существует
-    // в одном из списков задач и нам известен его идентификатор, так же буду ссылаться на ТЗ:
-    // "При обновлении можете считать, что на вход подаётся новый объект, который должен полностью заменить старый."
-    // "Если вы храните эпики в HashMap, где ключами являются идентификаторы,
-    // то обновление — это запись нового эпика tasks.put(task.getId(), task))"
-    // Тем самым получается, что мы не должны в уже существующих задачах вносить изменения а должны изменять существующ-
-    // ие объекты путем полного их обновления новым объектом с "верным идентификатором"
+
+    /* 1 - У нас нет возможности сделать обновление задачи до момента её добавления, если мы создали задачу то ей уже
+    присваивается идентификатор и обновлять мы можем только с "верным идентификатором"
+       2 - Вас я тоже понял, что в случае передачи некорректного объекта должно срабатывать исключение, наставник
+       предложил использовать throw Exception, но я так и не понял как это сделать, показалось, что слишком много
+       придётся переписывать код.
+     */
 
     public void updateEpic(Epic epic) {
-        int epicIndex = epic.getTaskId();
-        epicList.put(epicIndex, epic);
+        if (!epicList.containsKey(epic.getTaskId())) {
+            System.out.println("Такой задачи нет в списке");
+        } else {
+            int epicIndex = epic.getTaskId();
+            epicList.put(epicIndex, epic);
+        }
     }
 
     public void updateSubtask(Subtask subtask) {
-
-        int subtaskId = subtask.getTaskId();
-        subtaskList.put(subtaskId, subtask);
+        if (!subtaskList.containsKey(subtask.getTaskId())) {
+            System.out.println("Такой задачи нет в списке");
+        } else {
+            int subtaskId = subtask.getTaskId();
+            subtaskList.put(subtaskId, subtask);
+        }
         epicStatus();
     }
 
-    public void deleteTaskId(int id) { //    Удаление по идентификатору.
+    // Удаление по идентификатору.
+    public void deleteTaskId(int id) {
         tasks.remove(id);
     }
 
-    public void deleteEpicId(int id) { //    Удаление по идентификатору.
+    public void deleteEpicId(int id) {
         Epic epicForDelete = epicList.get(id);
         ArrayList<Integer> subtaskIdSize = epicForDelete.getSubtaskId();
         for (int i = 0; i < subtaskIdSize.size(); i++) {
@@ -155,13 +167,13 @@ public class Manager {
 
     }
 
-    public void deleteSubtaskId(int id) { //    Удаление по идентификатору.
+    public void deleteSubtaskId(int id) {
         subtaskList.remove(id);
-        epicStatusRemove(id); // В данном методе происходит удаление подзадачи из списка айдишников эпика
+        epicStatusRemove(id);
 
     }
 
-    //    Дополнительные методы:
+    // Дополнительные методы:
     public ArrayList<Subtask> showAllSubtaskInEpic(String epicName) { // Получение списка всех подзадач
         ArrayList<Subtask> subtaskInEpic = new ArrayList<>();         // определённого эпика.
         for (Epic testing : epicList.values()) {
@@ -173,11 +185,11 @@ public class Manager {
                 }
             }
 
-        } System.out.println(subtaskInEpic);
+        }
         return subtaskInEpic;
     }
 
-        public void epicStatusRemove(int id) {
+    public void epicStatusRemove(int id) {
             for (Epic ifSubtaskInEpic : epicList.values()) {
                 ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
                 if (subtaskIdSize.contains(id)) {
@@ -185,13 +197,14 @@ public class Manager {
                 for (int i = 0; i < subtaskIdSize.size(); i++) {
                     int subtaskIndex = subtaskIdSize.get(i);
                     if (subtaskIndex == id) {
-                        subtaskIdSize.remove(i);
+                        ifSubtaskInEpic.deleteSubtaskId(i);
                     }
                 }
                 } else {
                     System.out.println("Такой подзадачи нет");
                 }
-            } epicStatus();
+            }
+            epicStatus();
         }
 
     public void epicStatus() {
@@ -207,7 +220,7 @@ public class Manager {
                 ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
             if (subtaskIdSize.size() == 0) {
                 ifSubtaskInEpic.setTaskStatus("NEW");
-                break;
+                continue;
             }
 
                 for (int i = 0; i < subtaskIdSize.size(); i++) {

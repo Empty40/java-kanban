@@ -64,7 +64,7 @@ public class Main {
                 }
 
             } else if (command == 4) {
-                String hz = scanner.nextLine();
+                String test = scanner.nextLine();
                 System.out.println("Введите название задачи");
                 String taskName = scanner.nextLine();
 
@@ -74,7 +74,7 @@ public class Main {
                 System.out.println("3 - Подзадача");
                 int taskType = scanner.nextInt();
 
-                String pochemyTak = scanner.nextLine();
+                String test1 = scanner.nextLine();
                 System.out.println("Опишите вашу задачу");
                 String taskDescription = scanner.nextLine();
 
@@ -117,27 +117,39 @@ public class Main {
 
                 if (taskType == 1) {
                     HashMap<Integer, Task> tasksList = manager.getTasks();
-                    Task task = tasksList.get(id);
-                    task.setTaskName(taskName);
-                    task.setTaskDescription(taskDescription);
-                    task.setTaskStatus(taskStatus);
-                    manager.updateTask(task);
+                    if (!tasksList.containsKey(id)) {
+                        System.out.println("Такой задачи нет в списке");
+                    } else {
+                        Task task = tasksList.get(id);
+                        task.setTaskName(taskName);
+                        task.setTaskDescription(taskDescription);
+                        task.setTaskStatus(taskStatus);
+                        manager.updateTask(task);
+                    }
 
                 } else if (taskType == 2) {
                     HashMap<Integer, Epic> epicList = manager.getEpicList();
-                    Epic epic = epicList.get(id);
-                    epic.setTaskName(taskName);
-                    epic.setTaskDescription(taskDescription);
-                    epic.setTaskStatus(taskStatus);
-                    manager.updateEpic(epic);
+                    if (!epicList.containsKey(id)) {
+                        System.out.println("Такого эпика нет в списке");
+                    } else {
+                        Epic epic = epicList.get(id);
+                        epic.setTaskName(taskName);
+                        epic.setTaskDescription(taskDescription);
+                        epic.setTaskStatus(taskStatus);
+                        manager.updateEpic(epic);
+                    }
 
                 } else if (taskType == 3) {
                     HashMap<Integer, Subtask> subtaskList = manager.getSubtaskList();
-                    Subtask subtask = subtaskList.get(id);
-                    subtask.setTaskName(taskName);
-                    subtask.setTaskDescription(taskDescription);
-                    subtask.setTaskStatus(taskStatus);
-                    manager.updateSubtask(subtask);
+                    if (!subtaskList.containsKey(id)) {
+                        System.out.println("Такой подзадачи нет в списке");
+                    } else {
+                        Subtask subtask = subtaskList.get(id);
+                        subtask.setTaskName(taskName);
+                        subtask.setTaskDescription(taskDescription);
+                        subtask.setTaskStatus(taskStatus);
+                        manager.updateSubtask(subtask);
+                    }
 
                 } else {
                     System.out.println("Вводите корректные значения");
