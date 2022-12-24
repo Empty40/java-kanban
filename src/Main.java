@@ -149,7 +149,6 @@ public class Main {
                         System.out.println("Такой подзадачи нет в списке");
                     } else {
                         Subtask subtask = subtaskList.get(id);
-                        subtask.setSubtaskEpicId(5);
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
                         subtask.setTaskStatus(taskStatus);

@@ -13,10 +13,6 @@ public class Subtask extends Epic {
         return subtaskEpicId;
     }
 
-    public void setSubtaskEpicId(int subtaskEpicId) {
-        this.subtaskEpicId = subtaskEpicId;
-    }
-
     @Override
     public String toString() {
         return "models.Subtask{" +
