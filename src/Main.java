@@ -89,9 +89,13 @@ public class Main {
                     int subtaskEpicId = scanner.nextInt();
                     HashMap<Integer, Epic> epicList = manager.getEpicList();
                     Subtask subtask = new Subtask(taskName, taskDescription, "NEW", subtaskEpicId);
-                    Epic subtaskIdInEpic = epicList.get(subtaskEpicId);
-                    subtaskIdInEpic.setSubtaskId(manager.getTaskId());
-                    manager.newSubtask(subtask);
+                    if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
+                        System.out.println("Такого Эпика в списке нет!");
+                    } else {
+                        Epic subtaskIdInEpic = epicList.get(subtaskEpicId);
+                        subtaskIdInEpic.setSubtaskId(manager.getTaskId());
+                        manager.newSubtask(subtask);
+                    }
                 }
 
             } else if (command == 5) {
@@ -145,6 +149,7 @@ public class Main {
                         System.out.println("Такой подзадачи нет в списке");
                     } else {
                         Subtask subtask = subtaskList.get(id);
+                        subtask.setSubtaskEpicId(5);
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
                         subtask.setTaskStatus(taskStatus);
@@ -175,10 +180,10 @@ public class Main {
 
             } else if (command == 7) {
                 String daChtoTakoeTo = scanner.nextLine(); // Не понимаю почему в этом месте сканер перепрыгивает на
-                System.out.println("Какой Эпик Вас интересует? Введите его название"); //следующую строку, или дополни -
-                String epicName = scanner.nextLine(); // - тельно требуется нажать Enter
+                System.out.println("Какой Эпик Вас интересует? Введите его айди"); //следующую строку, или дополни -
+                int epicName = scanner.nextInt(); // - тельно требуется нажать Enter
 
-                manager.showAllSubtaskInEpic(epicName);
+                System.out.println(manager.showAllSubtaskInEpic(epicName));
             } else if (command == 0) {
                 break;
             } else {

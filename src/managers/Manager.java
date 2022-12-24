@@ -106,11 +106,15 @@ public class Manager {
     }
 
     public void newSubtask(Subtask subtask) { //    Создание. Сам объект должен передаваться в качестве параметра.
-        subtask.setTaskId(taskId);
-        subtaskList.put(taskId, subtask);
-        epicStatus();
-        System.out.println("Задаче присвоен идентификатор " + taskId);
-        taskId++;
+        if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
+            System.out.println("Такого Эпика в списке нет!");
+        } else {
+            subtask.setTaskId(taskId);
+            subtaskList.put(taskId, subtask);
+            epicStatus();
+            System.out.println("Задаче присвоен идентификатор " + taskId);
+            taskId++;
+        }
     }
 
     public void updateTask(Task task) { //    Обновление. Новая версия объекта с верным идентификатором
@@ -121,16 +125,6 @@ public class Manager {
             tasks.put(taskIndex, task);
         }
     }
-    /*В мейн анологичный по сути код для того, чтобы исключение не вылезало во врем проверки, в случае если отрабатывать
-    исключение нужно не таким образом, то пожалуйста подскажите как обработать исключение, return тут не срабатывает*/
-
-
-    /* 1 - У нас нет возможности сделать обновление задачи до момента её добавления, если мы создали задачу то ей уже
-    присваивается идентификатор и обновлять мы можем только с "верным идентификатором"
-       2 - Вас я тоже понял, что в случае передачи некорректного объекта должно срабатывать исключение, наставник
-       предложил использовать throw Exception, но я так и не понял как это сделать, показалось, что слишком много
-       придётся переписывать код.
-     */
 
     public void updateEpic(Epic epic) {
         if (!epicList.containsKey(epic.getTaskId())) {
@@ -141,12 +135,19 @@ public class Manager {
         }
     }
 
+    // Создал проверку по айди, который мы вкладываем в сабтаск при создании задачи, но если честно опять не понимаю из-
+    // за чего у нас айдишник эпика поменяется, т.к нам не доступно изменять айдишник задач, вообще, а при обновлении
+    // задач у нас подаётся эпик с  "верным" идентификатором
     public void updateSubtask(Subtask subtask) {
         if (!subtaskList.containsKey(subtask.getTaskId())) {
-            System.out.println("Такой задачи нет в списке");
+            System.out.println("Такой подзадачи нет в списке");
         } else {
-            int subtaskId = subtask.getTaskId();
-            subtaskList.put(subtaskId, subtask);
+            if (epicList.containsKey(subtask.getSubtaskEpicId())) {
+                int subtaskId = subtask.getTaskId();
+                subtaskList.put(subtaskId, subtask);
+            } else {
+                System.out.println("Такой задачи нет в списке");
+            }
         }
         epicStatus();
     }
@@ -174,17 +175,18 @@ public class Manager {
     }
 
     // Дополнительные методы:
-    public ArrayList<Subtask> showAllSubtaskInEpic(String epicName) { // Получение списка всех подзадач
-        ArrayList<Subtask> subtaskInEpic = new ArrayList<>();         // определённого эпика.
-        for (Epic testing : epicList.values()) {
-            if (Objects.equals(testing.getTaskName(), epicName)) {
-                ArrayList<Integer> subtaskIdSize = testing.getSubtaskId();
-                for (int i = 0; i < subtaskIdSize.size(); i++) {
-                    int index = subtaskIdSize.get(i);
-                    subtaskInEpic.add(subtaskList.get(index));
-                }
+    public ArrayList<Subtask> showAllSubtaskInEpic(int epicId) { // Получение списка всех подзадач
+        Epic listOfEpic = epicList.get(epicId);
+        ArrayList<Subtask> subtaskInEpic = null;
+        if (listOfEpic != null) {
+            subtaskInEpic = new ArrayList<>();
+            ArrayList<Integer> index = listOfEpic.getSubtaskId();
+            for (int i = 0; i < index.size(); i++) {
+                Integer indexSubtask = index.get(i);
+                subtaskInEpic.add(subtaskList.get(indexSubtask));
             }
-
+        } else {
+            System.out.println("Данного айди нет в списке");
         }
         return subtaskInEpic;
     }
