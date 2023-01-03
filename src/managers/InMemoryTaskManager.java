@@ -1,6 +1,7 @@
 package managers;
 
 import models.Epic;
+import models.Managers;
 import models.Subtask;
 import models.Task;
 
@@ -8,7 +9,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Manager {
+import Interface.TaskManager;
+import Interface.HistoryManager;
+
+
+public class InMemoryTaskManager implements TaskManager {
+
+    HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int taskId = 1;
 
@@ -34,11 +41,9 @@ public class Manager {
         return taskId;
     }
 
-    // Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
-    // Методы для каждого из типа задач(Задача/Эпик/Подзадача):
     public ArrayList<Task> showAllTask() { //    Получение списка всех задач.
-        ArrayList<Task> taskPrint = new ArrayList<>(); // Понял свою ошибку, возвращал не сам список, а toString()
-        for (Task taskValue : tasks.values()) { // теперь, надеюсь, сделал верный возврат списка
+        ArrayList<Task> taskPrint = new ArrayList<>();
+        for (Task taskValue : tasks.values()) {
             taskPrint.add(taskValue);
         } return taskPrint;
     }
@@ -62,8 +67,8 @@ public class Manager {
     }
 
     public void deleteAllEpic() { //    Удаление всех Эпиков.
-        epicList.clear(); // Тут тоже понял, мы же удаляем список эпиков и вместе с этим удаляются и список айдишников
-        subtaskList.clear(); // подзадач
+        epicList.clear();
+        subtaskList.clear();
     }
 
     public void deleteAllSubtask() { //    Удаление всех Подзадач.
@@ -79,14 +84,17 @@ public class Manager {
     }
 
     public Task showTaskById(int id) { //    Получение по идентификатору.
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     public Epic showEpicById(int id) { //    Получение по идентификатору.
+        historyManager.add(epicList.get(id));
         return epicList.get(id);
     }
 
     public Subtask showSubtaskById(int id) { //    Получение по идентификатору.
+        historyManager.add(subtaskList.get(id));
         return subtaskList.get(id);
     }
 
@@ -135,9 +143,6 @@ public class Manager {
         }
     }
 
-    // Создал проверку по айди, который мы вкладываем в сабтаск при создании задачи, но если честно опять не понимаю из-
-    // за чего у нас айдишник эпика поменяется, т.к нам не доступно изменять айдишник задач, вообще, а при обновлении
-    // задач у нас подаётся эпик с "верным" идентификатором
     public void updateSubtask(Subtask subtask) {
         if (!subtaskList.containsKey(subtask.getTaskId())) {
             System.out.println("Такой подзадачи нет в списке");
@@ -248,5 +253,12 @@ public class Manager {
                 }
         }
     }
+
+    @Override
+    public void getHistory() {
+        historyManager.getHistory();
+    }
+
+
 }
 

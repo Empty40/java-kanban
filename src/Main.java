@@ -1,5 +1,6 @@
-import managers.Manager;
+import Interface.TaskManager;
 import models.Epic;
+import models.Managers;
 import models.Subtask;
 import models.Task;
 
@@ -7,9 +8,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
 
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Manager manager = new Manager();
+        TaskManager taskManager = Managers.getDefault();
 
         while (true) {
             printMenu();
@@ -21,11 +24,11 @@ public class Main {
                 int taskType = scanner.nextInt();
 
                 if (taskType == 1) {
-                    System.out.println(manager.showAllTask());
+                    System.out.println(taskManager.showAllTask());
                 } else if (taskType == 2) {
-                    System.out.println(manager.showAllEpic());
+                    System.out.println(taskManager.showAllEpic());
                 } else if (taskType == 3) {
-                    System.out.println(manager.showAllSubtask());
+                    System.out.println(taskManager.showAllSubtask());
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -36,11 +39,11 @@ public class Main {
                 int taskType = scanner.nextInt();
 
                 if (taskType == 1) {
-                    manager.deleteAllTask();
+                    taskManager.deleteAllTask();
                 } else if (taskType == 2) {
-                    manager.deleteAllEpic();
+                    taskManager.deleteAllEpic();
                 } else if (taskType == 3) {
-                    manager.deleteAllSubtask();
+                    taskManager.deleteAllSubtask();
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -54,11 +57,11 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    System.out.println(manager.showTaskById(id));
+                    System.out.println(taskManager.showTaskById(id));
                 } else if (taskType == 2) {
-                    manager.showEpicById(id);
+                    taskManager.showEpicById(id);
                 } else if (taskType == 3) {
-                    manager.showSubtaskById(id);
+                    taskManager.showSubtaskById(id);
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -80,21 +83,21 @@ public class Main {
 
                 if (taskType == 1) {
                     Task task = new Task(taskName, taskDescription, "NEW");
-                    manager.newTask(task);
+                    taskManager.newTask(task);
                 } else if (taskType == 2) {
                     Epic epic = new Epic(taskName, taskDescription, "NEW");
-                    manager.newEpic(epic);
+                    taskManager.newEpic(epic);
                 } else {
                     System.out.println("В рамках какого эпика выполняется задача?");
                     int subtaskEpicId = scanner.nextInt();
-                    HashMap<Integer, Epic> epicList = manager.getEpicList();
+                    HashMap<Integer, Epic> epicList = taskManager.getEpicList();
                     Subtask subtask = new Subtask(taskName, taskDescription, "NEW", subtaskEpicId);
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
                         Epic subtaskIdInEpic = epicList.get(subtaskEpicId);
-                        subtaskIdInEpic.setSubtaskId(manager.getTaskId());
-                        manager.newSubtask(subtask);
+                        subtaskIdInEpic.setSubtaskId(taskManager.getTaskId());
+                        taskManager.newSubtask(subtask);
                     }
                 }
 
@@ -120,7 +123,7 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    HashMap<Integer, Task> tasksList = manager.getTasks();
+                    HashMap<Integer, Task> tasksList = taskManager.getTasks();
                     if (!tasksList.containsKey(id)) {
                         System.out.println("Такой задачи нет в списке");
                     } else {
@@ -128,11 +131,11 @@ public class Main {
                         task.setTaskName(taskName);
                         task.setTaskDescription(taskDescription);
                         task.setTaskStatus(taskStatus);
-                        manager.updateTask(task);
+                        taskManager.updateTask(task);
                     }
 
                 } else if (taskType == 2) {
-                    HashMap<Integer, Epic> epicList = manager.getEpicList();
+                    HashMap<Integer, Epic> epicList = taskManager.getEpicList();
                     if (!epicList.containsKey(id)) {
                         System.out.println("Такого эпика нет в списке");
                     } else {
@@ -140,11 +143,11 @@ public class Main {
                         epic.setTaskName(taskName);
                         epic.setTaskDescription(taskDescription);
                         epic.setTaskStatus(taskStatus);
-                        manager.updateEpic(epic);
+                        taskManager.updateEpic(epic);
                     }
 
                 } else if (taskType == 3) {
-                    HashMap<Integer, Subtask> subtaskList = manager.getSubtaskList();
+                    HashMap<Integer, Subtask> subtaskList = taskManager.getSubtaskList();
                     if (!subtaskList.containsKey(id)) {
                         System.out.println("Такой подзадачи нет в списке");
                     } else {
@@ -152,7 +155,7 @@ public class Main {
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
                         subtask.setTaskStatus(taskStatus);
-                        manager.updateSubtask(subtask);
+                        taskManager.updateSubtask(subtask);
                     }
 
                 } else {
@@ -168,11 +171,11 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    manager.deleteTaskId(id);
+                    taskManager.deleteTaskId(id);
                 } else if (taskType == 2) {
-                    manager.deleteEpicId(id);
+                    taskManager.deleteEpicId(id);
                 } else if (taskType == 3) {
-                    manager.deleteSubtaskId(id);
+                    taskManager.deleteSubtaskId(id);
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -182,7 +185,9 @@ public class Main {
                 System.out.println("Какой Эпик Вас интересует? Введите его айди"); //следующую строку, или дополни -
                 int epicName = scanner.nextInt(); // - тельно требуется нажать Enter
 
-                System.out.println(manager.showAllSubtaskInEpic(epicName));
+                System.out.println(taskManager.showAllSubtaskInEpic(epicName));
+            } else if (command == 8) {
+                taskManager.getHistory();
             } else if (command == 0) {
                 break;
             } else {
@@ -199,6 +204,7 @@ public class Main {
                     System.out.println("5 - Обновить Задачу/Эпик/Подзадачу");
                     System.out.println("6 - Удалить Задачи/Эпики/Подзадачи по идентефикатору");
                     System.out.println("7 - Получение списка всех подзадач определённого эпика");
+                    System.out.println("8 - Посмотреть историю запросов");
                     System.out.println("0 - Закрыть менеджер задач");
                     System.out.println("Введите команду");
                 }
