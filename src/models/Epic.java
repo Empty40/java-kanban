@@ -5,8 +5,8 @@ public class Epic extends Task {
 
     private ArrayList<Integer> subtaskId = new ArrayList<>();
 
-    public Epic(String taskName, String taskDescription, String taskStatus) {
-        super(taskName, taskDescription, taskStatus);
+    public Epic(String taskName, String taskDescription, TaskStatus status) {
+        super(taskName, taskDescription, status);
     }
 
     public ArrayList<Integer> getSubtaskId() {

@@ -1,4 +1,4 @@
-package Interface;
+package interfaces;
 
 import models.Epic;
 import models.Subtask;
@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {
-
-    int taskId = 1;
 
     HashMap<Integer, Task> tasks = new HashMap<>();
 
@@ -23,12 +21,11 @@ public interface TaskManager {
 
     HashMap<Integer, Subtask> getSubtaskList();
 
-    int getTaskId();
+    int getTaskId(); // С помощью данного метода я добавляю в список, в классе Эпик, айди подзадач которые в него входят
 
     // Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
     // Методы для каждого из типа задач(Задача/Эпик/Подзадача):
     ArrayList<Task> showAllTask();
-
 
     ArrayList<Epic> showAllEpic();
 
@@ -66,8 +63,6 @@ public interface TaskManager {
 
     // Дополнительные методы:
     ArrayList<Subtask> showAllSubtaskInEpic(int epicId);
-
-    void epicStatusRemove(int id);
 
     void epicStatus();
 

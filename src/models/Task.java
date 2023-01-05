@@ -5,12 +5,12 @@ public class Task {
     private int taskId;
     private String taskName;
     private String taskDescription;
-    private String taskStatus;
+    private TaskStatus taskStatus;
 
-    public Task(String taskName, String taskDescription, String taskStatus) {
+    public Task(String taskName, String taskDescription, TaskStatus status) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
-        this.taskStatus = taskStatus;
+        taskStatus = status;
     }
 
     public int getTaskId() {
@@ -37,11 +37,11 @@ public class Task {
         this.taskDescription = taskDescription;
     }
 
-    public String getTaskStatus() {
+    public TaskStatus getTaskStatus() {
         return taskStatus;
     }
 
-    public void setTaskStatus(String taskStatus) {
+    public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
 
@@ -52,8 +52,6 @@ public class Task {
                 ", taskDescription='" + taskDescription + '\'' +
                 ", taskStatus=" + taskStatus +
                 '}';
-
-
     }
 }
 

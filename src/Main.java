@@ -1,8 +1,5 @@
-import Interface.TaskManager;
-import models.Epic;
-import models.Managers;
-import models.Subtask;
-import models.Task;
+import interfaces.TaskManager;
+import models.*;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -82,16 +79,16 @@ public class Main {
                 String taskDescription = scanner.nextLine();
 
                 if (taskType == 1) {
-                    Task task = new Task(taskName, taskDescription, "NEW");
+                    Task task = new Task(taskName, taskDescription, TaskStatus.NEW);
                     taskManager.newTask(task);
                 } else if (taskType == 2) {
-                    Epic epic = new Epic(taskName, taskDescription, "NEW");
+                    Epic epic = new Epic(taskName, taskDescription, TaskStatus.NEW);
                     taskManager.newEpic(epic);
                 } else {
                     System.out.println("В рамках какого эпика выполняется задача?");
                     int subtaskEpicId = scanner.nextInt();
                     HashMap<Integer, Epic> epicList = taskManager.getEpicList();
-                    Subtask subtask = new Subtask(taskName, taskDescription, "NEW", subtaskEpicId);
+                    Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatus.NEW);
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
@@ -114,10 +111,10 @@ public class Main {
                 String taskDescription = scanner.nextLine();
 
                 System.out.println("Какой статус у задачи?");
-                System.out.println("NEW");
-                System.out.println("IN_PROGRESS");
-                System.out.println("DONE");
-                String taskStatus = scanner.nextLine();
+                System.out.println("1 - NEW");
+                System.out.println("2 - IN_PROGRESS");
+                System.out.println("3 - DONE");
+                int taskStatus = scanner.nextInt();
 
                 System.out.println("Введите идентификатор задачи");
                 int id = scanner.nextInt();
@@ -130,7 +127,13 @@ public class Main {
                         Task task = tasksList.get(id);
                         task.setTaskName(taskName);
                         task.setTaskDescription(taskDescription);
-                        task.setTaskStatus(taskStatus);
+                        if (taskStatus == 1) {
+                            task.setTaskStatus(TaskStatus.NEW);
+                        } else if (taskStatus == 2) {
+                            task.setTaskStatus(TaskStatus.IN_PROGRESS);
+                        } else {
+                            task.setTaskStatus(TaskStatus.DONE);
+                        }
                         taskManager.updateTask(task);
                     }
 
@@ -142,7 +145,13 @@ public class Main {
                         Epic epic = epicList.get(id);
                         epic.setTaskName(taskName);
                         epic.setTaskDescription(taskDescription);
-                        epic.setTaskStatus(taskStatus);
+                        if (taskStatus == 1) {
+                            epic.setTaskStatus(TaskStatus.NEW);
+                        } else if (taskStatus == 2) {
+                            epic.setTaskStatus(TaskStatus.IN_PROGRESS);
+                        } else {
+                            epic.setTaskStatus(TaskStatus.DONE);
+                        }
                         taskManager.updateEpic(epic);
                     }
 
@@ -154,7 +163,13 @@ public class Main {
                         Subtask subtask = subtaskList.get(id);
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
-                        subtask.setTaskStatus(taskStatus);
+                        if (taskStatus == 1) {
+                            subtask.setTaskStatus(TaskStatus.NEW);
+                        } else if (taskStatus == 2) {
+                            subtask.setTaskStatus(TaskStatus.IN_PROGRESS);
+                        } else {
+                            subtask.setTaskStatus(TaskStatus.DONE);
+                        }
                         taskManager.updateSubtask(subtask);
                     }
 

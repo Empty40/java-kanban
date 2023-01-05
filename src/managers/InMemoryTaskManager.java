@@ -1,21 +1,17 @@
 package managers;
 
-import models.Epic;
-import models.Managers;
-import models.Subtask;
-import models.Task;
+import models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import Interface.TaskManager;
-import Interface.HistoryManager;
-
+import interfaces.TaskManager;
+import interfaces.HistoryManager;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int taskId = 1;
 
@@ -45,7 +41,8 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<Task> taskPrint = new ArrayList<>();
         for (Task taskValue : tasks.values()) {
             taskPrint.add(taskValue);
-        } return taskPrint;
+        }
+        return taskPrint;
     }
 
     public ArrayList<Epic> showAllEpic() { //    Получение списка всех задач.
@@ -84,8 +81,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Task showTaskById(int id) { //    Получение по идентификатору.
-        historyManager.add(tasks.get(id));
-        return tasks.get(id);
+       if (tasks.get(id) == null) {
+        return null;
+       } else {
+           historyManager.add(tasks.get(id));
+           return tasks.get(id);
+       }
     }
 
     public Epic showEpicById(int id) { //    Получение по идентификатору.
@@ -176,7 +177,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtaskId(int id) {
         subtaskList.remove(id);
         epicStatusRemove(id);
-
     }
 
     // Дополнительные методы:
@@ -196,7 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskInEpic;
     }
 
-    public void epicStatusRemove(int id) {
+    private void epicStatusRemove(int id) {
             for (Epic ifSubtaskInEpic : epicList.values()) {
                 ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
                 if (subtaskIdSize.contains(id)) {
@@ -216,7 +216,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void epicStatus() {
 
-
         for (Epic ifSubtaskInEpic : epicList.values()) {
             int doneCount = 0;
             int newCount = 0;
@@ -226,7 +225,7 @@ public class InMemoryTaskManager implements TaskManager {
 
                 ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
             if (subtaskIdSize.size() == 0) {
-                ifSubtaskInEpic.setTaskStatus("NEW");
+                ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
                 continue;
             }
 
@@ -235,20 +234,20 @@ public class InMemoryTaskManager implements TaskManager {
                     int subtaskStatus = subtaskIdSize.get(i);
 
                     if (subtaskIdSize.size() == 0) {
-                        ifSubtaskInEpic.setTaskStatus("NEW");
+                        ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
                         break;
-                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), "DONE")) {
+                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
                         doneCount++;
                         if (Objects.equals(doneCount, subtaskIdSize.size())) {
-                            valueEpic.setTaskStatus("DONE");
-                        } else { valueEpic.setTaskStatus("IN_PROGRESS"); }
-                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), "NEW")) {
+                            valueEpic.setTaskStatus(TaskStatus.DONE);
+                        } else { valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS); }
+                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.NEW)) {
                         newCount++;
                         if (Objects.equals(newCount, subtaskIdSize.size())) {
-                            valueEpic.setTaskStatus("NEW");
-                        } else { valueEpic.setTaskStatus("IN_PROGRESS"); }
+                            valueEpic.setTaskStatus(TaskStatus.NEW);
+                        } else { valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS); }
                     } else {
-                        valueEpic.setTaskStatus("IN_PROGRESS");
+                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                     }
                 }
         }
@@ -258,7 +257,5 @@ public class InMemoryTaskManager implements TaskManager {
     public void getHistory() {
         historyManager.getHistory();
     }
-
-
 }
 
