@@ -9,22 +9,12 @@ import java.util.HashMap;
 
 public interface TaskManager {
 
-    HashMap<Integer, Task> tasks = new HashMap<>();
-
-    HashMap<Integer, Epic> epicList = new HashMap<>();
-
-    HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-
     HashMap<Integer, Task> getTasks();
 
     HashMap<Integer, Epic> getEpicList();
 
     HashMap<Integer, Subtask> getSubtaskList();
 
-    int getTaskId(); // С помощью данного метода я добавляю в список, в классе Эпик, айди подзадач которые в него входят
-
-    // Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
-    // Методы для каждого из типа задач(Задача/Эпик/Подзадача):
     ArrayList<Task> showAllTask();
 
     ArrayList<Epic> showAllEpic();
@@ -63,8 +53,6 @@ public interface TaskManager {
 
     // Дополнительные методы:
     ArrayList<Subtask> showAllSubtaskInEpic(int epicId);
-
-    void epicStatus();
 
     void getHistory();
 }

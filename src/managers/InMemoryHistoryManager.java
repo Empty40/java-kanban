@@ -1,10 +1,11 @@
 package managers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import interfaces.HistoryManager;
+
 import models.Task;
-import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -14,10 +15,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (history.size() == 10) {
             history.remove(0);
-            history.add(task);
-        } else {
-            history.add(task);
         }
+        history.add(task);
     }
 
     @Override
