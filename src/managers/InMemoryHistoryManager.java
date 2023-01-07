@@ -9,7 +9,7 @@ import models.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private List<Task> history = new ArrayList<>();
+    private final List<Task> history = new ArrayList<>();
 
     @Override
     public void add(Task task) {
