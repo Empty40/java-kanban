@@ -13,13 +13,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     private HistoryManager historyManager = Managers.getDefaultHistory();
 
-    private int taskId = 1;
-
     protected HashMap<Integer, Task> tasks = new HashMap<>();
 
     protected HashMap<Integer, Epic> epicList = new HashMap<>();
 
     protected HashMap<Integer, Subtask> subtaskList = new HashMap<>();
+
+    private int taskId = 1;
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -53,17 +53,30 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTask() { //    Удаление всех задач.
+        for (Integer index : tasks.keySet()) {
+            historyManager.remove(index);
+        }
         tasks.clear();
     }
 
     @Override
     public void deleteAllEpic() { //    Удаление всех Эпиков.
+        for (Integer index : epicList.keySet()) {
+            historyManager.remove(index);
+        }
+        for (Integer index : subtaskList.keySet()) {
+            historyManager.remove(index);
+        }
         epicList.clear();
         subtaskList.clear();
+
     }
 
     @Override
     public void deleteAllSubtask() { //    Удаление всех Подзадач.
+        for (Integer index : subtaskList.keySet()) {
+            historyManager.remove(index);
+        }
         for (Subtask index : subtaskList.values()) {
             int epicIndex = index.getSubtaskEpicId();
             for (int i = 0; i < epicList.size(); i++) {
@@ -73,6 +86,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         subtaskList.clear();
         epicStatus();
+
     }
 
     @Override
@@ -175,6 +189,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskId(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -184,14 +199,17 @@ public class InMemoryTaskManager implements TaskManager {
         for (int i = 0; i < subtaskIdSize.size(); i++) {
             Integer subtaskForDelete = subtaskIdSize.get(i);
             subtaskList.remove(subtaskForDelete);
+            historyManager.remove(subtaskForDelete);
         }
         epicList.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void deleteSubtaskId(int id) {
         subtaskList.remove(id);
         epicStatusRemove(id);
+        historyManager.remove(id);
     }
 
     // Дополнительные методы:
