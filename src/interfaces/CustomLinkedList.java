@@ -29,10 +29,6 @@ public class CustomLinkedList {
         return linkedMap.get(id);
     }
 
-    public HashMap<Integer, Node> getLinkedMap() {
-        return linkedMap;
-    }
-
     public void linkLast(Task task) {
         final Node oldTail = tail;
         final Node newTail = new Node(oldTail, task, null);
@@ -69,7 +65,6 @@ public class CustomLinkedList {
                 node.prev.next = node.next;
             }
         }
-
 
     public ArrayList<Task> getTasks() {
         ArrayList<Task> taskList = new ArrayList<>();
