@@ -1,5 +1,3 @@
-package LinkedList;
-
 import interfaces.TaskManager;
 import models.*;
 
@@ -210,16 +208,16 @@ public class Main {
         }
     }
 
-                public static void printMenu() {
-                    System.out.println("1 - Показать все Задачи/Эпики/Подзадачи ");
-                    System.out.println("2 - Удалить все Задачи/Эпики/Подзадачи");
-                    System.out.println("3 - Показать Задачи/Эпики/Подзадачи по идентефикатору");
-                    System.out.println("4 - Создать Задачу/Эпик/Подзадачу");
-                    System.out.println("5 - Обновить Задачу/Эпик/Подзадачу");
-                    System.out.println("6 - Удалить Задачи/Эпики/Подзадачи по идентефикатору");
-                    System.out.println("7 - Получение списка всех подзадач определённого эпика");
-                    System.out.println("8 - Посмотреть историю запросов");
-                    System.out.println("0 - Закрыть менеджер задач");
-                    System.out.println("Введите команду");
-                }
-        }
+    public static void printMenu() {
+        System.out.println("1 - Показать все Задачи/Эпики/Подзадачи ");
+        System.out.println("2 - Удалить все Задачи/Эпики/Подзадачи");
+        System.out.println("3 - Показать Задачи/Эпики/Подзадачи по идентефикатору");
+        System.out.println("4 - Создать Задачу/Эпик/Подзадачу");
+        System.out.println("5 - Обновить Задачу/Эпик/Подзадачу");
+        System.out.println("6 - Удалить Задачи/Эпики/Подзадачи по идентефикатору");
+        System.out.println("7 - Получение списка всех подзадач определённого эпика");
+        System.out.println("8 - Посмотреть историю запросов");
+        System.out.println("0 - Закрыть менеджер задач");
+        System.out.println("Введите команду");
+    }
+}
