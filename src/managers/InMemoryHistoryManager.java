@@ -5,31 +5,28 @@ import interfaces.CustomLinkedList;
 
 import models.Task;
 
+import java.util.ArrayList;
+
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private CustomLinkedList<Task> linkedList = new CustomLinkedList<>();
+    private final CustomLinkedList linkedList = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
-        if (linkedList.getLinkedMap().containsKey(task.getTaskId())) {
-            linkedList.removeNode(linkedList.getNode(task.getTaskId()));
-            linkedList.linkLast(task);
-        } else {
-            linkedList.linkLast(task);
-        }
+        int id = task.getTaskId();
+        linkedList.removeNode(linkedList.getNode(id));
+        linkedList.linkLast(task);
     }
+    // В моём случае, как я понимаю, моя нода это не отдельный класс, в связи с этим я не могу сделать переменную ноду
+    // с типом Node и записать в неё полученную ноду
 
     @Override
     public void remove(int id) {
-        if (linkedList.getLinkedMap().containsKey(id)) {
-            linkedList.removeNode(linkedList.getNode(id));
-        } else {
-            System.out.println("Такой задачи нет в истории просмотров");
-        }
+        linkedList.removeNode(linkedList.getNode(id));
     }
 
     @Override
-    public void getHistory() {
-        System.out.println(linkedList.getTasks());
+    public ArrayList<Task> getHistory() {
+        return linkedList.getTasks();
     }
 }

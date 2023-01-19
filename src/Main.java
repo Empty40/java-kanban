@@ -1,12 +1,10 @@
-package LinkedList;
-
 import interfaces.TaskManager;
 import models.*;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Main{
+public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -201,7 +199,7 @@ public class Main{
 
                 System.out.println(taskManager.showAllSubtaskInEpic(epicName));
             } else if (command == 8) {
-                taskManager.getHistory();
+                System.out.println(taskManager.getHistory());
             } else if (command == 0) {
                 break;
             } else {

@@ -54,6 +54,6 @@ public interface TaskManager {
     // Дополнительные методы:
     ArrayList<Subtask> showAllSubtaskInEpic(int epicId);
 
-    void getHistory();
+    ArrayList<Task> getHistory();
 }
 
