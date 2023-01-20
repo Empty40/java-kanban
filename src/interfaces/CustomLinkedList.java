@@ -45,26 +45,25 @@ public class CustomLinkedList {
         if (node == null) {
             return;
         }
-            if (node == head) {
-                head = node.next;
-                if (node.next == null) {
-                    head = null;
-                    tail = null;
-                } else {
-                    node.next.prev = null;
-                }
-            } else if (node == tail) {
-                tail = node.prev;
-                if (node.prev == null) {
-                    tail = null;
-                    head = null;
-                }
-                node.prev.next = null;
+        if (node == head) {
+            head = node.next;
+            if (node.next == null) {
+                tail = null;
             } else {
-                node.next.prev = node.prev;
-                node.prev.next = node.next;
+                node.next.prev = null;
             }
+        } else if (node == tail) {
+            tail = node.prev;
+            if (node.prev == null) {
+                head = null;
+            } else {
+                node.prev.next = null;
+            }
+        } else {
+            node.next.prev = node.prev;
+            node.prev.next = node.next;
         }
+    }
 
     public ArrayList<Task> getTasks() {
         ArrayList<Task> taskList = new ArrayList<>();

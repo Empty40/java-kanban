@@ -13,12 +13,18 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        int id = task.getTaskId();
-        linkedList.removeNode(linkedList.getNode(id));
-        linkedList.linkLast(task);
+        if (task == null) {
+            return;
+        } else {
+            int id = task.getTaskId();
+            linkedList.removeNode(linkedList.getNode(id));
+            linkedList.linkLast(task);
+        }
     }
-    // В моём случае, как я понимаю, моя нода это не отдельный класс, в связи с этим я не могу сделать переменную ноду
-    // с типом Node и записать в неё полученную ноду
+    // Есть вопрос, самый основной, а как в личку написать? ахах))
+    // На сколько я помню у нас есть возможность 1 раз написать в личные сообщения за 1 спринт.
+    // В остальном спасибо за ревью и за комментарии по код стайлу, он у меня пока хромает, но надеюсь
+    // в целом это не говнокод :D
 
     @Override
     public void remove(int id) {

@@ -91,32 +91,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task showTaskById(int id) { //    Получение по идентификатору.
-        Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
-            return task;
-        }
-        return null;
+            historyManager.add(tasks.get(id));
+            return tasks.get(id);
     }
 
     @Override
     public Epic showEpicById(int id) { //    Получение по идентификатору.
-        Epic epic = epicList.get(id);
-        if (epic != null) {
-            historyManager.add(epic);
-            return epic;
-        }
-        return null;
+            historyManager.add(epicList.get(id));
+            return epicList.get(id);
     }
 
     @Override
     public Subtask showSubtaskById(int id) { //    Получение по идентификатору.
-        Subtask subtask = subtaskList.get(id);
-        if (subtask != null) {
-            historyManager.add(subtask);
-            return subtask;
-        }
-        return null;
+            historyManager.add(subtaskList.get(id));
+            return subtaskList.get(id);
     }
 
     @Override
