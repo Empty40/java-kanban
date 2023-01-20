@@ -91,20 +91,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task showTaskById(int id) { //    Получение по идентификатору.
-            historyManager.add(tasks.get(id));
-            return tasks.get(id);
+        historyManager.add(tasks.get(id));
+        return tasks.get(id);
     }
 
     @Override
     public Epic showEpicById(int id) { //    Получение по идентификатору.
-            historyManager.add(epicList.get(id));
-            return epicList.get(id);
+        historyManager.add(epicList.get(id));
+        return epicList.get(id);
     }
 
     @Override
     public Subtask showSubtaskById(int id) { //    Получение по идентификатору.
-            historyManager.add(subtaskList.get(id));
-            return subtaskList.get(id);
+        historyManager.add(subtaskList.get(id));
+        return subtaskList.get(id);
     }
 
     @Override
@@ -219,9 +219,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void epicStatusRemove(int id) {
-            for (Epic ifSubtaskInEpic : epicList.values()) {
-                ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
-                if (subtaskIdSize.contains(id)) {
+        for (Epic ifSubtaskInEpic : epicList.values()) {
+            ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
+            if (subtaskIdSize.contains(id)) {
 
                 for (int i = 0; i < subtaskIdSize.size(); i++) {
                     int subtaskIndex = subtaskIdSize.get(i);
@@ -229,12 +229,12 @@ public class InMemoryTaskManager implements TaskManager {
                         ifSubtaskInEpic.deleteSubtaskId(i);
                     }
                 }
-                } else {
-                    System.out.println("Такой подзадачи нет");
-                }
+            } else {
+                System.out.println("Такой подзадачи нет");
             }
-            epicStatus();
         }
+        epicStatus();
+    }
 
     private void epicStatus() {
         for (Epic ifSubtaskInEpic : epicList.values()) {
@@ -242,32 +242,36 @@ public class InMemoryTaskManager implements TaskManager {
             int doneCount = 0;
             int newCount = 0;
 
-                int epicId = ifSubtaskInEpic.getTaskId();
-                Epic valueEpic = epicList.get(epicId);
-                ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
+            int epicId = ifSubtaskInEpic.getTaskId();
+            Epic valueEpic = epicList.get(epicId);
+            ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
             if (subtaskIdSize.size() == 0) {
                 ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
                 continue;
             }
-                for (int i = 0; i < subtaskIdSize.size(); i++) {
-                    int subtaskStatus = subtaskIdSize.get(i);
-                    if (subtaskIdSize.size() == 0) {
-                        ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
-                        break;
-                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
-                        doneCount++;
-                        if (Objects.equals(doneCount, subtaskIdSize.size())) {
-                            valueEpic.setTaskStatus(TaskStatus.DONE);
-                        } else { valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS); }
-                    } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.NEW)) {
-                        newCount++;
-                        if (Objects.equals(newCount, subtaskIdSize.size())) {
-                            valueEpic.setTaskStatus(TaskStatus.NEW);
-                        } else { valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS); }
+            for (int i = 0; i < subtaskIdSize.size(); i++) {
+                int subtaskStatus = subtaskIdSize.get(i);
+                if (subtaskIdSize.size() == 0) {
+                    ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
+                    break;
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
+                    doneCount++;
+                    if (Objects.equals(doneCount, subtaskIdSize.size())) {
+                        valueEpic.setTaskStatus(TaskStatus.DONE);
                     } else {
                         valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                     }
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.NEW)) {
+                    newCount++;
+                    if (Objects.equals(newCount, subtaskIdSize.size())) {
+                        valueEpic.setTaskStatus(TaskStatus.NEW);
+                    } else {
+                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
+                    }
+                } else {
+                    valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                 }
+            }
         }
     }
 
