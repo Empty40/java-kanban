@@ -15,16 +15,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null) {
             return;
-        } else {
-            int id = task.getTaskId();
-            linkedList.removeNode(linkedList.getNode(id));
-            linkedList.linkLast(task);
         }
+        int id = task.getTaskId();
+        linkedList.removeNode(linkedList.getNode(id));
+        linkedList.linkLast(task);
     }
-    // Есть вопрос, самый основной, а как в личку написать? ахах))
-    // На сколько я помню у нас есть возможность 1 раз написать в личные сообщения за 1 спринт.
-    // В остальном спасибо за ревью и за комментарии по код стайлу, он у меня пока хромает, но надеюсь
-    // в целом это не говнокод :D
 
     @Override
     public void remove(int id) {

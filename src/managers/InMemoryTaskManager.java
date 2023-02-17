@@ -11,7 +11,7 @@ import interfaces.HistoryManager;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     protected HashMap<Integer, Task> tasks = new HashMap<>();
 
@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
-    private int taskId = 1;
+    private static int taskId = 1;
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -184,8 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpicId(int id) {
         Epic epicForDelete = epicList.get(id);
         ArrayList<Integer> subtaskIdSize = epicForDelete.getSubtaskId();
-        for (int i = 0; i < subtaskIdSize.size(); i++) {
-            Integer subtaskForDelete = subtaskIdSize.get(i);
+        for (Integer subtaskForDelete : subtaskIdSize) {
             subtaskList.remove(subtaskForDelete);
             historyManager.remove(subtaskForDelete);
         }
@@ -208,8 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (listOfEpic != null) {
             subtaskInEpic = new ArrayList<>();
             ArrayList<Integer> index = listOfEpic.getSubtaskId();
-            for (int i = 0; i < index.size(); i++) {
-                Integer indexSubtask = index.get(i);
+            for (Integer indexSubtask : index) {
                 subtaskInEpic.add(subtaskList.get(indexSubtask));
             }
         } else {
@@ -246,30 +244,30 @@ public class InMemoryTaskManager implements TaskManager {
             Epic valueEpic = epicList.get(epicId);
             ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
             if (subtaskIdSize.size() == 0) {
-                ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
+                ifSubtaskInEpic.setTaskStatus(TaskStatusAndType.NEW);
                 continue;
             }
             for (int i = 0; i < subtaskIdSize.size(); i++) {
                 int subtaskStatus = subtaskIdSize.get(i);
                 if (subtaskIdSize.size() == 0) {
-                    ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
+                    ifSubtaskInEpic.setTaskStatus(TaskStatusAndType.NEW);
                     break;
-                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatusAndType.DONE)) {
                     doneCount++;
                     if (Objects.equals(doneCount, subtaskIdSize.size())) {
-                        valueEpic.setTaskStatus(TaskStatus.DONE);
+                        valueEpic.setTaskStatus(TaskStatusAndType.DONE);
                     } else {
-                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
+                        valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
                     }
-                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.NEW)) {
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatusAndType.NEW)) {
                     newCount++;
                     if (Objects.equals(newCount, subtaskIdSize.size())) {
-                        valueEpic.setTaskStatus(TaskStatus.NEW);
+                        valueEpic.setTaskStatus(TaskStatusAndType.NEW);
                     } else {
-                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
+                        valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
                     }
                 } else {
-                    valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
+                    valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
                 }
             }
         }

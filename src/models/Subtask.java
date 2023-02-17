@@ -2,9 +2,9 @@ package models;
 
 public class Subtask extends Epic {
 
-    private int subtaskEpicId;
+    private final int subtaskEpicId;
 
-    public Subtask(String taskName, String taskDescription, int subtaskEpicId, TaskStatus status) {
+    public Subtask(String taskName, String taskDescription, int subtaskEpicId, TaskStatusAndType status) {
         super(taskName, taskDescription, status);
         this.subtaskEpicId = subtaskEpicId;
     }
