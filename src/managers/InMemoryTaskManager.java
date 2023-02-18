@@ -244,30 +244,30 @@ public class InMemoryTaskManager implements TaskManager {
             Epic valueEpic = epicList.get(epicId);
             ArrayList<Integer> subtaskIdSize = ifSubtaskInEpic.getSubtaskId();
             if (subtaskIdSize.size() == 0) {
-                ifSubtaskInEpic.setTaskStatus(TaskStatusAndType.NEW);
+                ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
                 continue;
             }
             for (int i = 0; i < subtaskIdSize.size(); i++) {
                 int subtaskStatus = subtaskIdSize.get(i);
                 if (subtaskIdSize.size() == 0) {
-                    ifSubtaskInEpic.setTaskStatus(TaskStatusAndType.NEW);
+                    ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
                     break;
-                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatusAndType.DONE)) {
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
                     doneCount++;
                     if (Objects.equals(doneCount, subtaskIdSize.size())) {
-                        valueEpic.setTaskStatus(TaskStatusAndType.DONE);
+                        valueEpic.setTaskStatus(TaskStatus.DONE);
                     } else {
-                        valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                     }
-                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatusAndType.NEW)) {
+                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.NEW)) {
                     newCount++;
                     if (Objects.equals(newCount, subtaskIdSize.size())) {
-                        valueEpic.setTaskStatus(TaskStatusAndType.NEW);
+                        valueEpic.setTaskStatus(TaskStatus.NEW);
                     } else {
-                        valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                        valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                     }
                 } else {
-                    valueEpic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                    valueEpic.setTaskStatus(TaskStatus.IN_PROGRESS);
                 }
             }
         }

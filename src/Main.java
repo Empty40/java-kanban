@@ -17,8 +17,6 @@ public class Main {
             throw new RuntimeException(e);
         }
         FileBackedTasksManager taskManagerData = FileBackedTasksManager.loadFromFile(file);
-        //FileBackedTasksManager taskManagerData = new FileBackedTasksManager(file);
-
 
         while (true) {
             printMenu();
@@ -88,17 +86,17 @@ public class Main {
                 String taskDescription = scanner.nextLine();
 
                 if (taskType == 1) {
-                    Task task = new Task(taskName, taskDescription, TaskStatusAndType.NEW);
+                    Task task = new Task(taskName, taskDescription, TaskStatus.NEW);
                     //taskManagerData.newTask(task);
                     taskManagerData.newTask(task);
                 } else if (taskType == 2) {
-                    Epic epic = new Epic(taskName, taskDescription, TaskStatusAndType.NEW);
+                    Epic epic = new Epic(taskName, taskDescription, TaskStatus.NEW);
                     taskManagerData.newEpic(epic);
                 } else {
                     System.out.println("В рамках какого эпика выполняется задача?");
                     int subtaskEpicId = scanner.nextInt();
                     HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
-                    Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatusAndType.NEW);
+                    Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatus.NEW);
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
@@ -136,11 +134,11 @@ public class Main {
                         task.setTaskName(taskName);
                         task.setTaskDescription(taskDescription);
                         if (taskStatus == 1) {
-                            task.setTaskStatus(TaskStatusAndType.NEW);
+                            task.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
-                            task.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                            task.setTaskStatus(TaskStatus.IN_PROGRESS);
                         } else {
-                            task.setTaskStatus(TaskStatusAndType.DONE);
+                            task.setTaskStatus(TaskStatus.DONE);
                         }
                         taskManagerData.updateTask(task);
                     }
@@ -154,11 +152,11 @@ public class Main {
                         epic.setTaskName(taskName);
                         epic.setTaskDescription(taskDescription);
                         if (taskStatus == 1) {
-                            epic.setTaskStatus(TaskStatusAndType.NEW);
+                            epic.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
-                            epic.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                            epic.setTaskStatus(TaskStatus.IN_PROGRESS);
                         } else {
-                            epic.setTaskStatus(TaskStatusAndType.DONE);
+                            epic.setTaskStatus(TaskStatus.DONE);
                         }
                         taskManagerData.updateEpic(epic);
                     }
@@ -172,11 +170,11 @@ public class Main {
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
                         if (taskStatus == 1) {
-                            subtask.setTaskStatus(TaskStatusAndType.NEW);
+                            subtask.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
-                            subtask.setTaskStatus(TaskStatusAndType.IN_PROGRESS);
+                            subtask.setTaskStatus(TaskStatus.IN_PROGRESS);
                         } else {
-                            subtask.setTaskStatus(TaskStatusAndType.DONE);
+                            subtask.setTaskStatus(TaskStatus.DONE);
                         }
                         taskManagerData.updateSubtask(subtask);
                     }
