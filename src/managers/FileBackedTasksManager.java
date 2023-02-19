@@ -3,7 +3,6 @@ package managers;
 import exceptions.ManagerSaveException;
 
 import interfaces.HistoryManager;
-import interfaces.TaskManager;
 
 import models.*;
 
@@ -12,12 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static models.TaskType.TASK;
-
-public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-
-    //Добрый день, выяснил я в чем причина, почему я не могу Вам в личку написать, у меня сбой в пачке произошёл
-    //и у меня отсутствует данный чат, где я могу с Вами связаться. =/
+public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static File file;
 
@@ -63,36 +57,36 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     static String historyToString(HistoryManager manager) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Task taskData : manager.getHistory()) { //Замена переменной i на taskData
-            int taskId = taskData.getTaskId(); //Замена переменной q на taskId
-            String idToString = String.valueOf(taskId); //Замена переменной a на idToString
-            stringBuilder.append(idToString);
-            stringBuilder.append(",");
+        for (Task taskData : manager.getHistory()) {
+            int taskId = taskData.getTaskId();
+            String idToString = String.valueOf(taskId);
+            stringBuilder.append(idToString).append(",");
         }
+        //Данное условие сделано для того, чтобы при записи в файл у нас не получилась ошибка StringIndexOutOfBoundsException
         if (stringBuilder.length() != 0) {
-            stringBuilder.setLength(stringBuilder.length() - 1);
+            stringBuilder.setLength(stringBuilder.length() - 1);//а с помощью этого, я избавляюсь от запятой в конце
+            //айдишников, когда записываю их в файл.
         }
-
         return stringBuilder.toString();
     }
 
     static List<Integer> historyFromString(String value) {
         List<Integer> idList = new ArrayList<>();
         String[] idTask = value.split(",");
-        for (String id : idTask) { // Замена переменной s на id
+        for (String id : idTask) {
             idList.add(Integer.valueOf(id));
         }
         return idList;
     }
 
     private void addTaskInHistoryManager(List<Integer> arraysTask) {
-        for (Integer taskId : arraysTask) { // замена переменной i на taskId
+        for (Integer taskId : arraysTask) {
             if (tasks.containsKey(taskId)) {
-                super.historyManager.add(tasks.get(taskId));
+                historyManager.add(tasks.get(taskId));
             } else if (epicList.containsKey(taskId)) {
-                super.historyManager.add(epicList.get(taskId));
+                historyManager.add(epicList.get(taskId));
             } else {
-                super.historyManager.add(subtaskList.get(taskId));
+                historyManager.add(subtaskList.get(taskId));
             }
         }
     }
@@ -104,7 +98,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             FileReader fl = new FileReader(file);
             BufferedReader br = new BufferedReader(fl);
             while (br.readLine() != null) {
-                String[] lineContent = content.split("\n"); //Замена переменной qwe на lineContent
+                String[] lineContent = content.split("\n");
                 String last = null;
                 String lines;
                 while (null != (lines = br.readLine())) {
@@ -129,8 +123,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                             idEpic = Integer.parseInt(line[5]);
                         }
                     }
-// Не очень понял как тут использовать энам типов задач для конструкции switc-case, т.к в этом случае у меня при
-//парсинге данных последнюю строку приходится дополнительно отрабатывать ввиду того, что она выбрасывает исключения.
+                    //При парсинге последней строки вылетает ошибка, т.к там только айдишники задач, не могу придумать как мне
+                    //вынести парсинг последней строки. В связи с этим делаю так, как пока могу.
                     switch (line[1]) {
                         case "TASK":
                             Task task = new Task(name, description, status);
@@ -150,51 +144,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                             break;
                         default:
                             if (last != null) {
-                                List<Integer> lastLine = historyFromString(last); //Замена переменной past на lastLine
+                                List<Integer> lastLine = historyFromString(last);
                                 addTaskInHistoryManager(lastLine);
                                 save();
-                            } else {
-                                throw new NullPointerException();
+                                //Если после прочтения файла мы сразу перезапустим программу, то у нас не сохранится история задач, и айдишники
+                                //в файле не останутся, именно за этим тут метод save()
                             }
                             break;
                     }
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка записи в файл:" + file, e);
         }
     }
 
     public String toString(Task task) {
-        if (tasks.containsKey(task.getTaskId())) {
-            String id = Integer.toString(task.getTaskId());
-            String type = String.valueOf(TASK);
-            String name = task.getTaskName();
-            String status = String.valueOf(task.getTaskStatus());
-            String description = task.getTaskDescription();
-            return id + "," + type + "," + name + "," + status + "," + description;
-        } else if (epicList.containsKey(task.getTaskId())) {
-            String id = Integer.toString(task.getTaskId());
-            String type = String.valueOf(TaskType.EPIC);
-            String name = task.getTaskName();
-            String status = String.valueOf(task.getTaskStatus());
-            String description = task.getTaskDescription();
-            return id + "," + type + "," + name + "," + status + "," + description;
-        } else {
-            String id = Integer.toString(task.getTaskId());
-            String type = String.valueOf(TaskType.SUBTASK);
-            String name = task.getTaskName();
-            String status = String.valueOf(task.getTaskStatus());
-            String description = task.getTaskDescription();
-            Subtask sub = null;
-            for (Integer subtask : subtaskList.keySet()) {
-                if (subtask.equals(Integer.parseInt(id))) {
-                    sub = subtaskList.get(subtask);
-                }
-            }
-            String byEpic = String.valueOf(sub.getSubtaskEpicId());
-            return id + "," + type + "," + name + "," + status + "," + description + "," + byEpic;
-        }
+        return task.getTaskId() + "," + task.getType() + "," + task.getTaskName() + "," +
+                task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId();
     }
 
     public void newTask(Task task) { //    Создание. Сам объект должен передаваться в качестве параметра.

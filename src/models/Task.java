@@ -21,6 +21,14 @@ public class Task {
         this.taskId = taskId;
     }
 
+    public int getSubtaskEpicId() {
+        return 0;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
+
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }

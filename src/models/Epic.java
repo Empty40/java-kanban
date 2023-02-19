@@ -26,6 +26,10 @@ public class Epic extends Task {
         subtaskId.clear();
     }
 
+    public TaskType getType() {
+        return TaskType.EPIC;
+    }
+
     @Override
     public String toString() {
         return "models.Epic{" +
