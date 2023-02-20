@@ -7,15 +7,13 @@ import interfaces.HistoryManager;
 import models.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static File file;
 
-    private static final String title = "id,type,name,status,description,epic" + "\n";
+    private static final String title = "id,type,name,status,description,epic";
 
     public FileBackedTasksManager(File files) {
         file = files;
@@ -32,7 +30,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void save() {
         try {
             FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(title);
+            fileWriter.write(title + "\n");
 
             for (Integer t : tasks.keySet()) {
                 fileWriter.write(toString(tasks.get(t)) + "\n");
@@ -62,10 +60,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String idToString = String.valueOf(taskId);
             stringBuilder.append(idToString).append(",");
         }
-        //Данное условие сделано для того, чтобы при записи в файл у нас не получилась ошибка StringIndexOutOfBoundsException
         if (stringBuilder.length() != 0) {
-            stringBuilder.setLength(stringBuilder.length() - 1);//а с помощью этого, я избавляюсь от запятой в конце
-            //айдишников, когда записываю их в файл.
+            stringBuilder.setLength(stringBuilder.length() - 1);
         }
         return stringBuilder.toString();
     }
@@ -92,70 +88,56 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void fromString(File file) {
-        String path = String.valueOf(file);
+        //Спасибо за объяснение как корректно парсить данные и вынести обработку строк
         try {
-            String content = Files.readString(Path.of(path));
             FileReader fl = new FileReader(file);
             BufferedReader br = new BufferedReader(fl);
-            while (br.readLine() != null) {
-                String[] lineContent = content.split("\n");
-                String last = null;
-                String lines;
-                while (null != (lines = br.readLine())) {
-                    last = lines;
+            while (br.ready()) {
+                String line = br.readLine();
+                if (title.equals(line)) {
+                    continue;
                 }
-                for (String tasks : lineContent) {
-                    String[] line = tasks.split(",");
-                    if (line[0].isEmpty() || line[0].equals("id")) {
-                        continue;
-                    }
-                    int id = 0;
-                    String name = "";
-                    TaskStatus status = null;
-                    String description = "";
-                    int idEpic = 0;
-                    if (line[1].equals("TASK") || line[1].equals("EPIC") || line[1].equals("SUBTASK")) {
-                        id = Integer.parseInt(line[0]);
-                        name = line[2];
-                        status = TaskStatus.valueOf(line[3]);
-                        description = line[4];
-                        if (line.length > 5) {
-                            idEpic = Integer.parseInt(line[5]);
-                        }
-                    }
-                    //При парсинге последней строки вылетает ошибка, т.к там только айдишники задач, не могу придумать как мне
-                    //вынести парсинг последней строки. В связи с этим делаю так, как пока могу.
-                    switch (line[1]) {
-                        case "TASK":
-                            Task task = new Task(name, description, status);
-                            task.setTaskId(id);
-                            newTask(task);
-                            break;
-                        case "EPIC":
-                            Epic epic = new Epic(name, description, status);
-                            epic.setTaskId(id);
-                            newEpic(epic);
-                            break;
-                        case "SUBTASK":
-                            Subtask subtask = new Subtask(name, description, idEpic,
-                                    status);
-                            subtask.setTaskId(id);
-                            newSubtask(subtask);
-                            break;
-                        default:
-                            if (last != null) {
-                                List<Integer> lastLine = historyFromString(last);
-                                addTaskInHistoryManager(lastLine);
-                                save();
-                                //Если после прочтения файла мы сразу перезапустим программу, то у нас не сохранится история задач, и айдишники
-                                //в файле не останутся, именно за этим тут метод save()
-                            }
-                            break;
-                    }
+                if (line.isEmpty()) {
+                    String historyLine = br.readLine();
+                    List<Integer> history = historyFromString(historyLine);
+                    addTaskInHistoryManager(history);
+                    save();
+                    // метод save() для сохранения истории просмотров при перезапуске программы сразу после запуска
+                    break;
+                }
+                String[] lines = line.split(",");
+                int id = Integer.parseInt(lines[0]);
+                TaskType type = TaskType.valueOf(lines[1]);
+                String name = lines[2];
+                TaskStatus status = TaskStatus.valueOf(lines[3]);
+                String description = lines[4];
+                int idEpic = 0;
+                if (lines.length > 5) {
+                    idEpic = Integer.parseInt(lines[5]);
+                }
+                switch (type) {
+                    case TASK:
+                        Task task = new Task(name, description, status);
+                        task.setTaskId(id);
+                        newTask(task);
+                        break;
+                    case EPIC:
+                        Epic epic = new Epic(name, description, status);
+                        epic.setTaskId(id);
+                        newEpic(epic);
+                        break;
+                    case SUBTASK:
+                        Subtask subtask = new Subtask(name, description, idEpic,
+                                status);
+                        subtask.setTaskId(id);
+                        newSubtask(subtask);
+                        break;
+                    default:
+                        break;
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка записи в файл:" + file, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -199,23 +181,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Task showTaskById(int id) { //    Получение по идентификатору.
-        super.showTaskById(id);
+        Task task = super.showTaskById(id);
         save();
-        return super.showTaskById(id);
+        return task;
     }
 
     @Override
     public Epic showEpicById(int id) { //    Получение по идентификатору.
-        super.showEpicById(id);
+        Epic epic = super.showEpicById(id);
         save();
-        return super.showEpicById(id);
+        return epic;
     }
 
     @Override
     public Subtask showSubtaskById(int id) { //    Получение по идентификатору.
-        super.showSubtaskById(id);
+        Subtask subtask = super.showSubtaskById(id);
         save();
-        return super.showSubtaskById(id);
+        return subtask;
     }
 
     @Override
