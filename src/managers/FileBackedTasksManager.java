@@ -7,23 +7,27 @@ import interfaces.HistoryManager;
 import models.*;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static File file;
 
-    private static final String title = "id,type,name,status,description,epic";
+    private static final String title = "id,type,name,status,description,epic,duration,startTime,endTime";
 
     public FileBackedTasksManager(File files) {
         file = files;
     }
 
+    public FileBackedTasksManager() {
+    }
+
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-        fileBackedTasksManager.fromString(file);
-
-
+        if (file.canRead()) {
+            fileBackedTasksManager.fromString(file);
+        }
         return fileBackedTasksManager;
     }
 
@@ -68,11 +72,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     static List<Integer> historyFromString(String value) {
         List<Integer> idList = new ArrayList<>();
-        String[] idTask = value.split(",");
-        for (String id : idTask) {
-            idList.add(Integer.valueOf(id));
+        if (value != null) {
+            String[] idTask = value.split(",");
+            for (String id : idTask) {
+                idList.add(Integer.valueOf(id));
+            }
+        } else {
+            return idList;
         }
         return idList;
+
     }
 
     private void addTaskInHistoryManager(List<Integer> arraysTask) {
@@ -88,7 +97,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void fromString(File file) {
-        //Спасибо за объяснение как корректно парсить данные и вынести обработку строк
+        List<Task> taskArrayList = new ArrayList<>();
+        List<Epic> epicArrayList = new ArrayList<>();
+        List<Subtask> subtaskArrayList = new ArrayList<>();
         try {
             FileReader fl = new FileReader(file);
             BufferedReader br = new BufferedReader(fl);
@@ -115,56 +126,95 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 if (lines.length > 5) {
                     idEpic = Integer.parseInt(lines[5]);
                 }
+                int duration = 0;
+                LocalDateTime startTime = null;
+                LocalDateTime endTime = null;
+                if (lines.length > 6) {
+                    duration = Integer.parseInt(lines[6]);
+                }
+                if (lines.length > 8) {
+                    startTime = LocalDateTime.parse(lines[7]);
+                    endTime = LocalDateTime.parse(lines[8]);
+                }
                 switch (type) {
                     case TASK:
                         Task task = new Task(name, description, status);
                         task.setTaskId(id);
-                        newTask(task);
+                        taskArrayList.add(task);
+                        task.setDuration(duration);
+                        if (startTime != null) {
+                            task.setStartTime(startTime);
+                        }
+                        if (endTime != null) {
+                            task.setEndTime();
+                        }
                         break;
                     case EPIC:
                         Epic epic = new Epic(name, description, status);
                         epic.setTaskId(id);
-                        newEpic(epic);
+                        epicArrayList.add(epic);
                         break;
                     case SUBTASK:
                         Subtask subtask = new Subtask(name, description, idEpic,
                                 status);
                         subtask.setTaskId(id);
-                        newSubtask(subtask);
+                        subtaskArrayList.add(subtask);
+                        subtask.setDuration(duration);
+                        if (startTime != null) {
+                            subtask.setStartTime(startTime);
+                        }
+                        if (endTime != null) {
+                            subtask.setEndTime();
+                        }
                         break;
                     default:
                         break;
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка чтения файла" + file, e);
+            //Исправлено 21.02 в 18:32))
+        }
+        for (Task taskToAdd : taskArrayList) {
+            newTask(taskToAdd);
+        }
+        for (Epic epicToAdd : epicArrayList) {
+            newEpic(epicToAdd);
+        }
+        for (Subtask subtaskToAdd : subtaskArrayList) {
+            newSubtask(subtaskToAdd);
         }
     }
 
     public String toString(Task task) {
-        return task.getTaskId() + "," + task.getType() + "," + task.getTaskName() + "," +
-                task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId();
+        LocalDateTime taskStartTime = task.getStartTime();
+        if (taskStartTime != null) {
+            return task.getTaskId() + "," + task.getType() + "," + task.getTaskName() + "," +
+                    task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId() + ","
+                    + task.getDuration() + "," + task.getStartTime() + "," + task.getEndTime();
+        } else {
+            return task.getTaskId() + "," + task.getType() + "," + task.getTaskName() + "," +
+                    task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId() + ","
+                    + task.getDuration();
+        }
     }
 
-    public void newTask(Task task) { //    Создание. Сам объект должен передаваться в качестве параметра.
+    public void newTask(Task task) {
         super.newTask(task);
-        System.out.println(toString(task));
         save();
     }
 
-    public void newEpic(Epic epic) { //    Создание. Сам объект должен передаваться в качестве параметра.
+    public void newEpic(Epic epic) {
         super.newEpic(epic);
-        System.out.println(toString(epic));
         save();
     }
 
-    public void newSubtask(Subtask subtask) { //    Создание. Сам объект должен передаваться в качестве параметра.
+    public void newSubtask(Subtask subtask) {
         super.newSubtask(subtask);
-        System.out.println(toString(subtask));
         save();
     }
 
-    public void updateTask(Task task) { //    Обновление. Новая версия объекта с верным идентификатором
+    public void updateTask(Task task) {
         super.updateTask(task);
         save();
     }
@@ -180,40 +230,40 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task showTaskById(int id) { //    Получение по идентификатору.
+    public Task showTaskById(int id) {
         Task task = super.showTaskById(id);
         save();
         return task;
     }
 
     @Override
-    public Epic showEpicById(int id) { //    Получение по идентификатору.
+    public Epic showEpicById(int id) {
         Epic epic = super.showEpicById(id);
         save();
         return epic;
     }
 
     @Override
-    public Subtask showSubtaskById(int id) { //    Получение по идентификатору.
+    public Subtask showSubtaskById(int id) {
         Subtask subtask = super.showSubtaskById(id);
         save();
         return subtask;
     }
 
     @Override
-    public void deleteAllTask() { //    Удаление всех задач.
+    public void deleteAllTask() {
         super.deleteAllTask();
         save();
     }
 
     @Override
-    public void deleteAllEpic() { //    Удаление всех Эпиков.
+    public void deleteAllEpic() {
         super.deleteAllEpic();
         save();
     }
 
     @Override
-    public void deleteAllSubtask() { //    Удаление всех Подзадач.
+    public void deleteAllSubtask() {
         super.deleteAllSubtask();
         save();
     }

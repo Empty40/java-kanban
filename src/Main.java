@@ -3,8 +3,11 @@ import models.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import static managers.InMemoryTaskManager.getMaxTimeValue;
 
 public class Main {
 
@@ -85,9 +88,55 @@ public class Main {
                 System.out.println("Опишите вашу задачу");
                 String taskDescription = scanner.nextLine();
 
+                int duration = 0;
+                if (taskType != 2) {
+                    System.out.println("Сколько по времени займет выполнение задачи? (В минутах)");
+                    duration = scanner.nextInt();
+                }
+
+                int choise = 0;
+                if (taskType != 2) {
+                    System.out.println("Устанавливаем время начала задачи?");
+                    System.out.println("1 - Да");
+                    System.out.println("2 - Нет");
+                    choise = scanner.nextInt();
+                }
+
+                LocalDateTime startTime = null;
+                boolean i = true;
+                while (i) {
+                    if (choise == 1) {
+                        System.out.println("Когда приступаем к задаче? Укажите полную дату");
+                        System.out.println("Год:");
+                        int year = scanner.nextInt();
+                        System.out.println("Месяц:");
+                        int month = scanner.nextInt();
+                        System.out.println("День:");
+                        int day = scanner.nextInt();
+                        System.out.println("Час:");
+                        int hour = scanner.nextInt();
+                        System.out.println("Минута:");
+                        int minute = scanner.nextInt();
+                        startTime = LocalDateTime.of(year, month, day, hour, minute);
+                        if (startTime.isAfter(getMaxTimeValue())) {
+                            System.out.println("Укажите дату, не более, чем через год.");
+                        } else if (startTime.isBefore(LocalDateTime.now())) {
+                            System.out.println("Укажите дату, не раньше текущего момента.");
+                        } else {
+                            i = false;
+                        }
+                    } else {
+                        i = false;
+                    }
+                }
+
                 if (taskType == 1) {
                     Task task = new Task(taskName, taskDescription, TaskStatus.NEW);
-                    //taskManagerData.newTask(task);
+                    task.setDuration(duration);
+                    task.setStartTime(startTime);
+                    if (choise == 1) {
+                        task.setEndTime();
+                    }
                     taskManagerData.newTask(task);
                 } else if (taskType == 2) {
                     Epic epic = new Epic(taskName, taskDescription, TaskStatus.NEW);
@@ -97,6 +146,11 @@ public class Main {
                     int subtaskEpicId = scanner.nextInt();
                     HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
                     Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatus.NEW);
+                    subtask.setDuration(duration);
+                    subtask.setStartTime(startTime);
+                    if (choise == 1) {
+                        subtask.setEndTime();
+                    }
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
@@ -125,14 +179,64 @@ public class Main {
                 System.out.println("Введите идентификатор задачи");
                 int id = scanner.nextInt();
 
+                HashMap<Integer, Task> tasksList = taskManagerData.getTasks();
+                HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
+                HashMap<Integer, Subtask> subtaskList = taskManagerData.getSubtaskList();
+
+                System.out.println("Сколько по времени займет выполнение задачи? (В минутах)");
+                int duration = scanner.nextInt();
+
+                System.out.println("Устанавливаем время начала задачи?");
+                System.out.println("1 - Да");
+                System.out.println("2 - Нет");
+                int choise = scanner.nextInt();
+
+                LocalDateTime startTime = null;
+                boolean i = true;
+                while (i) {
+                    if (choise == 1) {
+                        System.out.println("Когда приступаем к задаче? Укажите полную дату");
+                        System.out.println("Год:");
+                        int year = scanner.nextInt();
+                        System.out.println("Месяц:");
+                        int month = scanner.nextInt();
+                        System.out.println("День:");
+                        int day = scanner.nextInt();
+                        System.out.println("Час:");
+                        int hour = scanner.nextInt();
+                        System.out.println("Минута:");
+                        int minute = scanner.nextInt();
+                        startTime = LocalDateTime.of(year, month, day, hour, minute);
+                        if (startTime.isAfter(getMaxTimeValue())) {
+                            System.out.println("Укажите дату, не более, чем через год.");
+                        } else if (startTime.isBefore(LocalDateTime.now())) {
+                            System.out.println("Укажите дату, не раньше текущего момента.");
+                        } else {
+                            i = false;
+                        }
+                    } else {
+                        if (taskType == 1) {
+                            startTime = tasksList.get(id).getStartTime();
+                        } else if (taskType == 2) {
+                            startTime = epicList.get(id).getStartTime();
+                        } else {
+                            startTime = subtaskList.get(id).getStartTime();
+                        }
+                    }
+                }
+
                 if (taskType == 1) {
-                    HashMap<Integer, Task> tasksList = taskManagerData.getTasks();
                     if (!tasksList.containsKey(id)) {
                         System.out.println("Такой задачи нет в списке");
                     } else {
                         Task task = tasksList.get(id);
                         task.setTaskName(taskName);
                         task.setTaskDescription(taskDescription);
+                        task.setDuration(duration);
+                        task.setStartTime(startTime);
+                        if (choise == 1) {
+                            task.setEndTime();
+                        }
                         if (taskStatus == 1) {
                             task.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
@@ -144,7 +248,6 @@ public class Main {
                     }
 
                 } else if (taskType == 2) {
-                    HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
                     if (!epicList.containsKey(id)) {
                         System.out.println("Такого эпика нет в списке");
                     } else {
@@ -162,13 +265,15 @@ public class Main {
                     }
 
                 } else if (taskType == 3) {
-                    HashMap<Integer, Subtask> subtaskList = taskManagerData.getSubtaskList();
                     if (!subtaskList.containsKey(id)) {
                         System.out.println("Такой подзадачи нет в списке");
                     } else {
                         Subtask subtask = subtaskList.get(id);
                         subtask.setTaskName(taskName);
                         subtask.setTaskDescription(taskDescription);
+                        subtask.setDuration(duration);
+                        subtask.setStartTime(startTime);
+                        subtask.setEndTime();
                         if (taskStatus == 1) {
                             subtask.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
@@ -209,6 +314,8 @@ public class Main {
                 System.out.println(taskManagerData.showAllSubtaskInEpic(epicName));
             } else if (command == 8) {
                 System.out.println(taskManagerData.getHistory());
+            } else if (command == 9) {
+                System.out.println(taskManagerData.getPrioritizedTasks());
             } else if (command == 0) {
                 break;
             } else {
@@ -226,6 +333,7 @@ public class Main {
         System.out.println("6 - Удалить Задачи/Эпики/Подзадачи по идентефикатору");
         System.out.println("7 - Получение списка всех подзадач определённого эпика");
         System.out.println("8 - Посмотреть историю запросов");
+        System.out.println("9 - Посмотреть задачи по приоритету");
         System.out.println("0 - Закрыть менеджер задач");
         System.out.println("Введите команду");
     }

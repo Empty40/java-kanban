@@ -25,6 +25,9 @@ public class Subtask extends Epic {
                 ", subtaskDescription='" + getTaskDescription() + '\'' +
                 ", subtaskStatus=" + getTaskStatus() + '\'' +
                 ", subtaskId=" + super.getTaskId() +
+                ", duration='" + getDuration() + '\'' +
+                ", startTime='" + getStartTime() + '\'' +
+                ", endTime='" + getEndTime() + '\'' +
                 '}';
     }
 }

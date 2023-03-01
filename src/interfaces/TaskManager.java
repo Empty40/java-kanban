@@ -55,5 +55,9 @@ public interface TaskManager {
     ArrayList<Subtask> showAllSubtaskInEpic(int epicId);
 
     ArrayList<Task> getHistory();
+
+    void epicStatus();
+
+    void resetTaskId();
 }
 
