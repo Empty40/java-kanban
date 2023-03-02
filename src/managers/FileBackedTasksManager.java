@@ -123,9 +123,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 TaskStatus status = TaskStatus.valueOf(lines[3]);
                 String description = lines[4];
                 int idEpic = 0;
-                if (lines.length > 5) {
+                /*if (lines.length > 5) {
                     idEpic = Integer.parseInt(lines[5]);
-                }
+                }*/
                 int duration = 0;
                 LocalDateTime startTime = null;
                 LocalDateTime endTime = null;
@@ -145,9 +145,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         if (startTime != null) {
                             task.setStartTime(startTime);
                         }
-                        if (endTime != null) {
+                        /*if (endTime != null) {
                             task.setEndTime();
-                        }
+                        }*/
                         break;
                     case EPIC:
                         Epic epic = new Epic(name, description, status);
@@ -155,6 +155,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         epicArrayList.add(epic);
                         break;
                     case SUBTASK:
+                        idEpic = Integer.parseInt(lines[5]);
                         Subtask subtask = new Subtask(name, description, idEpic,
                                 status);
                         subtask.setTaskId(id);
@@ -163,9 +164,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         if (startTime != null) {
                             subtask.setStartTime(startTime);
                         }
-                        if (endTime != null) {
+                        /*if (endTime != null) {
                             subtask.setEndTime();
-                        }
+                        }*/
                         break;
                     default:
                         break;

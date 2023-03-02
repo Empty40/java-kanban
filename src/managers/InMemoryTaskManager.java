@@ -28,10 +28,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
-    TreeSet<Task> PrioritizedTasks = new TreeSet<>(comparator);
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(comparator);
 
-    public boolean chechTaskStartTime(Task task) {
-        for (Task allTask : PrioritizedTasks) {
+    private boolean chechTaskStartTime(Task task) {
+        for (Task allTask : prioritizedTasks) {
             if (allTask.getStartTime() != null && task.getStartTime() != null) {
                 if (task.getStartTime().isAfter(allTask.getStartTime()) ||
                         task.getStartTime().isEqual(allTask.getStartTime())) {
@@ -54,27 +54,27 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
-    public void treeSetRemoveTaskWithId(int id) {
-        PrioritizedTasks.removeIf(allTask -> allTask.getTaskId() == id);
+    public void treeSetRemoveTask(Task task) {
+        prioritizedTasks.removeIf(allTask -> allTask.equals(task));
     }
 
     public void treeSetRemoveAllTask() {
-        PrioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.TASK);
+        prioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.TASK);
     }
 
-    public void treeSetRemoveAllEpic() {
-        PrioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.EPIC);
-    }
+    /*public void treeSetRemoveAllEpic() {
+        prioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.EPIC);
+    }*/
 
     public void treeSetRemoveAllSubtask() {
-        PrioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.SUBTASK);
+        prioritizedTasks.removeIf(allTask -> allTask.getType() == TaskType.SUBTASK);
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
-        return PrioritizedTasks;
+        return new TreeSet<>(prioritizedTasks);
     }
 
-    protected static LocalDateTime MAX_TIME_VALUE = LocalDateTime.now().plusYears(1);
+    //protected static LocalDateTime MAX_TIME_VALUE = LocalDateTime.now().plusYears(1);
 
     private static int taskId = 1;
 
@@ -82,9 +82,9 @@ public class InMemoryTaskManager implements TaskManager {
         taskId = 1;
     }
 
-    public static LocalDateTime getMaxTimeValue() {
+    /*public static LocalDateTime getMaxTimeValue() {
         return MAX_TIME_VALUE;
-    }
+    }*/
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -135,7 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epicList.clear();
         subtaskList.clear();
-        treeSetRemoveAllEpic();
+        treeSetRemoveAllSubtask();
     } /////
 
     @Override
@@ -179,13 +179,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void newTask(Task task) {
         boolean timeLine = chechTaskStartTime(task);
+        task.setTaskId(taskId);
+        tasks.put(taskId, task);
+        System.out.println("Задаче присвоен идентификатор " + taskId);
         if (timeLine) {
-            task.setTaskId(taskId);
-            tasks.put(taskId, task);
-            System.out.println("Задаче присвоен идентификатор " + taskId);
-            PrioritizedTasks.add(task);
-            taskId++;
+            prioritizedTasks.add(task);
         }
+        taskId++;
     } /////
 
     @Override
@@ -200,35 +200,41 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void newSubtask(Subtask subtask) {
         boolean timeLine = chechTaskStartTime(subtask);
-        if (timeLine) {
-            if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
-                System.out.println("Такого Эпика в списке нет!");
-            } else {
-                subtask.setTaskId(taskId);
-                subtaskList.put(taskId, subtask);
-                Epic subtaskIdInEpic = epicList.get(subtask.getSubtaskEpicId());
-                subtaskIdInEpic.setSubtaskId(subtask.getTaskId());
-                chechTaskStartTime(subtask);
-                PrioritizedTasks.add(subtask);
-                epicStatus();
-                epicDuration();
-                epicStartTime();
-                epicEndTime();
-                System.out.println("Задаче присвоен идентификатор " + taskId);
-                taskId++;
+        if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
+            System.out.println("Такого Эпика в списке нет!");
+        } else {
+            subtask.setTaskId(taskId);
+            subtaskList.put(taskId, subtask);
+            Epic subtaskIdInEpic = epicList.get(subtask.getSubtaskEpicId());
+            subtaskIdInEpic.setSubtaskId(subtask.getTaskId());
+            chechTaskStartTime(subtask);
+            if (timeLine) {
+                prioritizedTasks.add(subtask);
             }
+            epicStatus();
+            epicDuration();
+            epicStartTime();
+            epicEndTime();
+            System.out.println("Задаче присвоен идентификатор " + taskId);
+            taskId++;
         }
     } /////
 
+    //Вот тут хочу уточнить, Вы предлагаете аааааа, пока писал, понял в чем суть, более быстрое выполнение удаления
+    //не придётся обходить отсортированный список циклом, действительно
     @Override
     public void updateTask(Task task) {
+        boolean timeLine = chechTaskStartTime(task);
         if (!tasks.containsKey(task.getTaskId())) {
             System.out.println("Такой задачи нет в списке");
         } else {
             int taskIndex = task.getTaskId();
+            Task taskExist = tasks.get(taskIndex);
             tasks.put(taskIndex, task);
-            treeSetRemoveTaskWithId(taskIndex);
-            PrioritizedTasks.add(task);
+            prioritizedTasks.remove(taskExist);
+            if (timeLine) {
+                prioritizedTasks.add(task);
+            }
         }
     } /////
 
@@ -244,14 +250,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
+        boolean timeLine = chechTaskStartTime(subtask);
         if (!subtaskList.containsKey(subtask.getTaskId())) {
             System.out.println("Такой подзадачи нет в списке");
         } else {
             if (epicList.containsKey(subtask.getSubtaskEpicId())) {
                 int subtaskId = subtask.getTaskId();
+                Subtask subtaskExist = subtaskList.get(subtaskId);
                 subtaskList.put(subtaskId, subtask);
-                treeSetRemoveTaskWithId(subtaskId);
-                PrioritizedTasks.add(subtask);
+                prioritizedTasks.remove(subtaskExist);
+                if (timeLine) {
+                    prioritizedTasks.add(subtask);
+                }
             } else {
                 System.out.println("Такой задачи нет в списке");
             }
@@ -266,7 +276,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTaskId(int id) {
         tasks.remove(id);
         historyManager.remove(id);
-        treeSetRemoveTaskWithId(id);
+        treeSetRemoveTask(tasks.get(id));
     } /////
 
     @Override
@@ -276,6 +286,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subtaskForDelete : subtaskIdSize) {
             subtaskList.remove(subtaskForDelete);
             historyManager.remove(subtaskForDelete);
+            treeSetRemoveTask(subtaskList.get(subtaskForDelete));
         }
         epicList.remove(id);
         historyManager.remove(id);
@@ -286,7 +297,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskList.remove(id);
         epicStatusRemove(id);
         historyManager.remove(id);
-        treeSetRemoveTaskWithId(id);
+        treeSetRemoveTask(subtaskList.get(id));
     } /////
 
     // Дополнительные методы:
@@ -417,7 +428,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (subtaskIdList.size() > 1) {
                 for (Integer subtaskId : subtaskIdList) {
                     if (endTime != null && subtaskList.get(subtaskId).getEndTime() != null) {
-                    LocalDateTime endTimeSubtask = subtaskList.get(subtaskId).getEndTime();
+                        LocalDateTime endTimeSubtask = subtaskList.get(subtaskId).getEndTime();
                         if (endTime.isBefore(endTimeSubtask)) {
                             endTime = endTimeSubtask;
                             epics.setEndTime(endTime);

@@ -7,6 +7,12 @@ public class Epic extends Task {
 
     private LocalDateTime endTime;
 
+    private final ArrayList<Integer> subtaskId = new ArrayList<>();
+
+    public Epic(String taskName, String taskDescription, TaskStatus status) {
+        super(taskName, taskDescription, status);
+    }
+
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
@@ -15,18 +21,12 @@ public class Epic extends Task {
         return endTime;
     }
 
-    private final ArrayList<Integer> subtaskId = new ArrayList<>();
-
-    public Epic(String taskName, String taskDescription, TaskStatus status) {
-        super(taskName, taskDescription, status);
+    public void setSubtaskId(int subtaskId) {
+        this.subtaskId.add(subtaskId);
     }
 
     public ArrayList<Integer> getSubtaskId() {
         return subtaskId;
-    }
-
-    public void setSubtaskId(int subtaskId) {
-        this.subtaskId.add(subtaskId);
     }
 
     public void deleteSubtaskId(int id) {

@@ -11,7 +11,7 @@ public class Task {
     private int duration;
     private LocalDateTime startTime;
 
-    private LocalDateTime endTime;
+    //private LocalDateTime endTime;
 
     public Task(String taskName, String taskDescription, TaskStatus status) {
         this.taskName = taskName;
@@ -75,12 +75,15 @@ public class Task {
         return startTime;
     }
 
-    public void setEndTime() {
+    /*public void setEndTime() {
         endTime = startTime.plusMinutes(duration);
-    }
+    }*/
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
+        if (startTime != null) {
+            return startTime.plusMinutes(duration);
+        }
+        return null;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class Task {
                 ", taskStatus=" + taskStatus +
                 ", duration='" + duration + '\'' +
                 ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
+                ", endTime='" + getEndTime() + '\'' +
                 '}';
     }
 }
