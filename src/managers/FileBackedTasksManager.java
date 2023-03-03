@@ -29,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileBackedTasksManager.fromString(file);
         }
         return fileBackedTasksManager;
-    }
+    } //+
 
     private void save() {
         try {
@@ -55,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи в файл:" + file, e);
         }
-    }
+    } //+
 
     static String historyToString(HistoryManager manager) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -68,7 +68,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             stringBuilder.setLength(stringBuilder.length() - 1);
         }
         return stringBuilder.toString();
-    }
+    } //+
 
     static List<Integer> historyFromString(String value) {
         List<Integer> idList = new ArrayList<>();
@@ -82,7 +82,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return idList;
 
-    }
+    } //+
 
     private void addTaskInHistoryManager(List<Integer> arraysTask) {
         for (Integer taskId : arraysTask) {
@@ -94,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 historyManager.add(subtaskList.get(taskId));
             }
         }
-    }
+    } //+
 
     public void fromString(File file) {
         List<Task> taskArrayList = new ArrayList<>();
@@ -113,7 +113,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     List<Integer> history = historyFromString(historyLine);
                     addTaskInHistoryManager(history);
                     save();
-                    // метод save() для сохранения истории просмотров при перезапуске программы сразу после запуска
                     break;
                 }
                 String[] lines = line.split(",");
@@ -122,19 +121,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 String name = lines[2];
                 TaskStatus status = TaskStatus.valueOf(lines[3]);
                 String description = lines[4];
-                int idEpic = 0;
-                /*if (lines.length > 5) {
-                    idEpic = Integer.parseInt(lines[5]);
-                }*/
+                int idEpic;
                 int duration = 0;
                 LocalDateTime startTime = null;
-                LocalDateTime endTime = null;
                 if (lines.length > 6) {
                     duration = Integer.parseInt(lines[6]);
                 }
                 if (lines.length > 8) {
                     startTime = LocalDateTime.parse(lines[7]);
-                    endTime = LocalDateTime.parse(lines[8]);
                 }
                 switch (type) {
                     case TASK:
@@ -145,9 +139,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         if (startTime != null) {
                             task.setStartTime(startTime);
                         }
-                        /*if (endTime != null) {
-                            task.setEndTime();
-                        }*/
                         break;
                     case EPIC:
                         Epic epic = new Epic(name, description, status);
@@ -164,9 +155,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         if (startTime != null) {
                             subtask.setStartTime(startTime);
                         }
-                        /*if (endTime != null) {
-                            subtask.setEndTime();
-                        }*/
                         break;
                     default:
                         break;
@@ -174,7 +162,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла" + file, e);
-            //Исправлено 21.02 в 18:32))
         }
         for (Task taskToAdd : taskArrayList) {
             newTask(taskToAdd);
@@ -185,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (Subtask subtaskToAdd : subtaskArrayList) {
             newSubtask(subtaskToAdd);
         }
-    }
+    } //+
 
     public String toString(Task task) {
         LocalDateTime taskStartTime = task.getStartTime();
@@ -198,7 +185,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId() + ","
                     + task.getDuration();
         }
-    }
+    } //+
 
     public void newTask(Task task) {
         super.newTask(task);

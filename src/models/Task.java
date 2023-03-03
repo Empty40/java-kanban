@@ -11,8 +11,6 @@ public class Task {
     private int duration;
     private LocalDateTime startTime;
 
-    //private LocalDateTime endTime;
-
     public Task(String taskName, String taskDescription, TaskStatus status) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
@@ -74,10 +72,6 @@ public class Task {
     public LocalDateTime getStartTime() {
         return startTime;
     }
-
-    /*public void setEndTime() {
-        endTime = startTime.plusMinutes(duration);
-    }*/
 
     public LocalDateTime getEndTime() {
         if (startTime != null) {

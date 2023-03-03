@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Scanner;
 
-//import static managers.InMemoryTaskManager.getMaxTimeValue;
 
 public class Main {
 
@@ -134,9 +133,6 @@ public class Main {
                     Task task = new Task(taskName, taskDescription, TaskStatus.NEW);
                     task.setDuration(duration);
                     task.setStartTime(startTime);
-                    /*if (choise == 1) {
-                        task.setEndTime();
-                    }*/
                     taskManagerData.newTask(task);
                 } else if (taskType == 2) {
                     Epic epic = new Epic(taskName, taskDescription, TaskStatus.NEW);
@@ -148,9 +144,6 @@ public class Main {
                     Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatus.NEW);
                     subtask.setDuration(duration);
                     subtask.setStartTime(startTime);
-                    /*if (choise == 1) {
-                        subtask.setEndTime();
-                    }*/
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
@@ -234,9 +227,6 @@ public class Main {
                         task.setTaskDescription(taskDescription);
                         task.setDuration(duration);
                         task.setStartTime(startTime);
-                        /*if (choise == 1) {
-                            task.setEndTime();
-                        }*/
                         if (taskStatus == 1) {
                             task.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {
@@ -273,7 +263,6 @@ public class Main {
                         subtask.setTaskDescription(taskDescription);
                         subtask.setDuration(duration);
                         subtask.setStartTime(startTime);
-                        /*subtask.setEndTime();*/
                         if (taskStatus == 1) {
                             subtask.setTaskStatus(TaskStatus.NEW);
                         } else if (taskStatus == 2) {

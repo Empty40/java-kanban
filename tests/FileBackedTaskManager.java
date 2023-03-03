@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class FileBackedTaskManager extends TaskManagerTest {
+public class FileBackedTaskManager extends TaskManagerTest<FileBackedTasksManager> {
 
     @BeforeEach
     public void beforeEach() {
@@ -44,7 +44,7 @@ public class FileBackedTaskManager extends TaskManagerTest {
         Assertions.assertEquals(0, fileBackedTasksManager.getHistory().size()
                 , "Список истории должен быть пуст");
 
-    } /////
+    } //+
 
     @Test
     public void saveAndExtractionFileBackedTasksManagerTest() {
@@ -79,7 +79,7 @@ public class FileBackedTaskManager extends TaskManagerTest {
                 , "Список подзадач должен быть пуст");
         Assertions.assertEquals(0, fileBackedTasksManager2.getHistory().size()
                 , "Список истории должен быть пуст");
-    } /////
+    } //+
 
     @Test
     public void FileBackedTasksManagerTest() {
@@ -153,5 +153,5 @@ public class FileBackedTaskManager extends TaskManagerTest {
                 , "Задача не удалилась по идентификатору");
         Assertions.assertEquals(0, fileBackedTasksManager.showAllEpic().size()
                 , "Эпик не удалился по идентификатору");
-    }
+    } //+
 }
