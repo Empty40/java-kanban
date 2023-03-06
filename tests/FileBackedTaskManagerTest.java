@@ -10,12 +10,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class FileBackedTaskManager extends TaskManagerTest<FileBackedTasksManager> {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+
+    File file;
 
     @BeforeEach
     public void beforeEach() {
         file = new File("saveTasks.csv");
-        test = new FileBackedTasksManager();
+        test = new FileBackedTasksManager(file);
         test.resetTaskId();
     }
 

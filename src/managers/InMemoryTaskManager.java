@@ -343,10 +343,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             for (int i = 0; i < subtaskIdSize.size(); i++) {
                 int subtaskStatus = subtaskIdSize.get(i);
-                if (subtaskIdSize.size() == 0) {
-                    ifSubtaskInEpic.setTaskStatus(TaskStatus.NEW);
-                    break;
-                } else if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
+                if (Objects.equals(subtaskList.get(subtaskStatus).getTaskStatus(), TaskStatus.DONE)) {
                     doneCount++;
                     if (Objects.equals(doneCount, subtaskIdSize.size())) {
                         valueEpic.setTaskStatus(TaskStatus.DONE);
