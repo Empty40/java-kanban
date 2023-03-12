@@ -1,5 +1,8 @@
 import managers.FileBackedTasksManager;
+import managers.HttpTaskManager;
 import models.*;
+import server.HttpTaskServer;
+import server.KVServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +21,13 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        try {
+            new KVServer().start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         FileBackedTasksManager taskManagerData = FileBackedTasksManager.loadFromFile(file);
+        HttpTaskManager httpTaskManager = Managers.getDefault();
 
         while (true) {
             printMenu();
@@ -30,11 +39,11 @@ public class Main {
                 int taskType = scanner.nextInt();
 
                 if (taskType == 1) {
-                    System.out.println(taskManagerData.showAllTask());
+                    System.out.println(httpTaskManager.showAllTask());
                 } else if (taskType == 2) {
-                    System.out.println(taskManagerData.showAllEpic());
+                    System.out.println(httpTaskManager.showAllEpic());
                 } else if (taskType == 3) {
-                    System.out.println(taskManagerData.showAllSubtask());
+                    System.out.println(httpTaskManager.showAllSubtask());
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -45,11 +54,11 @@ public class Main {
                 int taskType = scanner.nextInt();
 
                 if (taskType == 1) {
-                    taskManagerData.deleteAllTask();
+                    httpTaskManager.deleteAllTask();
                 } else if (taskType == 2) {
-                    taskManagerData.deleteAllEpic();
+                    httpTaskManager.deleteAllEpic();
                 } else if (taskType == 3) {
-                    taskManagerData.deleteAllSubtask();
+                    httpTaskManager.deleteAllSubtask();
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -63,11 +72,11 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    System.out.println(taskManagerData.showTaskById(id));
+                    System.out.println(httpTaskManager.showTaskById(id));
                 } else if (taskType == 2) {
-                    System.out.println(taskManagerData.showEpicById(id));
+                    System.out.println(httpTaskManager.showEpicById(id));
                 } else if (taskType == 3) {
-                    System.out.println(taskManagerData.showSubtaskById(id));
+                    System.out.println(httpTaskManager.showSubtaskById(id));
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -133,21 +142,21 @@ public class Main {
                     Task task = new Task(taskName, taskDescription, TaskStatus.NEW);
                     task.setDuration(duration);
                     task.setStartTime(startTime);
-                    taskManagerData.newTask(task);
+                    httpTaskManager.newTask(task);
                 } else if (taskType == 2) {
                     Epic epic = new Epic(taskName, taskDescription, TaskStatus.NEW);
-                    taskManagerData.newEpic(epic);
+                    httpTaskManager.newEpic(epic);
                 } else {
                     System.out.println("В рамках какого эпика выполняется задача?");
                     int subtaskEpicId = scanner.nextInt();
-                    HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
+                    HashMap<Integer, Epic> epicList = httpTaskManager.getEpicList();
                     Subtask subtask = new Subtask(taskName, taskDescription, subtaskEpicId, TaskStatus.NEW);
                     subtask.setDuration(duration);
                     subtask.setStartTime(startTime);
                     if (!epicList.containsKey(subtask.getSubtaskEpicId())) {
                         System.out.println("Такого Эпика в списке нет!");
                     } else {
-                        taskManagerData.newSubtask(subtask);
+                        httpTaskManager.newSubtask(subtask);
                     }
                 }
 
@@ -172,9 +181,9 @@ public class Main {
                 System.out.println("Введите идентификатор задачи");
                 int id = scanner.nextInt();
 
-                HashMap<Integer, Task> tasksList = taskManagerData.getTasks();
-                HashMap<Integer, Epic> epicList = taskManagerData.getEpicList();
-                HashMap<Integer, Subtask> subtaskList = taskManagerData.getSubtaskList();
+                HashMap<Integer, Task> tasksList = httpTaskManager.getTasks();
+                HashMap<Integer, Epic> epicList = httpTaskManager.getEpicList();
+                HashMap<Integer, Subtask> subtaskList = httpTaskManager.getSubtaskList();
 
                 System.out.println("Сколько по времени займет выполнение задачи? (В минутах)");
                 int duration = scanner.nextInt();
@@ -234,7 +243,7 @@ public class Main {
                         } else {
                             task.setTaskStatus(TaskStatus.DONE);
                         }
-                        taskManagerData.updateTask(task);
+                        httpTaskManager.updateTask(task);
                     }
 
                 } else if (taskType == 2) {
@@ -251,7 +260,7 @@ public class Main {
                         } else {
                             epic.setTaskStatus(TaskStatus.DONE);
                         }
-                        taskManagerData.updateEpic(epic);
+                        httpTaskManager.updateEpic(epic);
                     }
 
                 } else if (taskType == 3) {
@@ -270,7 +279,7 @@ public class Main {
                         } else {
                             subtask.setTaskStatus(TaskStatus.DONE);
                         }
-                        taskManagerData.updateSubtask(subtask);
+                        httpTaskManager.updateSubtask(subtask);
                     }
 
                 } else {
@@ -286,11 +295,11 @@ public class Main {
                 int id = scanner.nextInt();
 
                 if (taskType == 1) {
-                    taskManagerData.deleteTaskId(id);
+                    httpTaskManager.deleteTaskId(id);
                 } else if (taskType == 2) {
-                    taskManagerData.deleteEpicId(id);
+                    httpTaskManager.deleteEpicId(id);
                 } else if (taskType == 3) {
-                    taskManagerData.deleteSubtaskId(id);
+                    httpTaskManager.deleteSubtaskId(id);
                 } else {
                     System.out.println("Вводите корректные значения");
                 }
@@ -300,11 +309,13 @@ public class Main {
                 System.out.println("Какой Эпик Вас интересует? Введите его айди"); //следующую строку, или дополни -
                 int epicName = scanner.nextInt(); // - тельно требуется нажать Enter
 
-                System.out.println(taskManagerData.showAllSubtaskInEpic(epicName));
+                System.out.println(httpTaskManager.showAllSubtaskInEpic(epicName));
             } else if (command == 8) {
-                System.out.println(taskManagerData.getHistory());
+                System.out.println(httpTaskManager.getHistory());
             } else if (command == 9) {
-                System.out.println(taskManagerData.getPrioritizedTasks());
+                System.out.println(httpTaskManager.getPrioritizedTasks());
+            } else if (command == 10) {
+                httpTaskManager.loadFromServer();
             } else if (command == 0) {
                 break;
             } else {
@@ -323,6 +334,7 @@ public class Main {
         System.out.println("7 - Получение списка всех подзадач определённого эпика");
         System.out.println("8 - Посмотреть историю запросов");
         System.out.println("9 - Посмотреть задачи по приоритету");
+        System.out.println("10 - Загрузить задачи с сервера");
         System.out.println("0 - Закрыть менеджер задач");
         System.out.println("Введите команду");
     }

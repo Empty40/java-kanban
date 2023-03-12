@@ -23,7 +23,17 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        linkedList.removeNode(linkedList.getNode(id));
+        if (id != 0) {
+            linkedList.removeNode(linkedList.getNode(id));
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        ArrayList<Integer> taskForDelete = linkedList.getId();
+        for (int i : taskForDelete) {
+            remove(i);
+        }
     }
 
     @Override

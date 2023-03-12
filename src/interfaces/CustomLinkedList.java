@@ -25,6 +25,14 @@ public class CustomLinkedList {
 
     private final HashMap<Integer, Node> linkedMap = new HashMap<>();
 
+    public ArrayList<Integer> getId() {
+        ArrayList<Integer> taskId = null;
+        if (linkedMap != null) {
+            taskId.addAll(linkedMap.keySet());
+        }
+        return taskId;
+    }
+
     public Node getNode(int id) {
         return linkedMap.get(id);
     }
@@ -59,6 +67,8 @@ public class CustomLinkedList {
             } else {
                 node.prev.next = null;
             }
+        } else if (node != head & node != tail) {
+            return;
         } else {
             node.next.prev = node.prev;
             node.prev.next = node.next;

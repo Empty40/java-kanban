@@ -1,15 +1,14 @@
 package models;
 
 import interfaces.HistoryManager;
-import interfaces.TaskManager;
 
 import managers.InMemoryHistoryManager;
-import managers.InMemoryTaskManager;
+import managers.HttpTaskManager;
 
 public class Managers {
 
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static HttpTaskManager getDefault() {
+        return new HttpTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {
