@@ -1,6 +1,9 @@
 import managers.FileBackedTasksManager;
 import managers.HttpTaskManager;
-import models.*;
+import models.Epic;
+import models.Subtask;
+import models.Task;
+import models.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +39,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     }
 
     @Test
-    public void HttpTaskManagerTest() {
+    public void httpTaskManagerTest() {
 
         Task task = new Task("Name", "Description", TaskStatus.NEW);
         test.newTask(task);

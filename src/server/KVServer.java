@@ -1,14 +1,14 @@
 package server;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
@@ -28,8 +28,6 @@ public class KVServer {
     }
 
     private void load(HttpExchange h) throws IOException {
-        //Я что-то немного подвыгорел с этим ТЗ, скорее всего проект не слишком хорошо сделан, но я уже не
-        //знаю куда смотреть и что делать.
         try {
             System.out.println("\n/load");
             if (!hasAuth(h)) {

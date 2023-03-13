@@ -39,7 +39,7 @@ public class HistoryManagerTest {
         history = historyManager.getHistory();
 
         Assertions.assertEquals(0, history.size(), "История должна быть пустая");
-    } //+
+    }
 
     @Test
     public void deleteInHistoryFirstTask() {
@@ -62,7 +62,7 @@ public class HistoryManagerTest {
 
         Assertions.assertEquals(task2, history.get(0), "Порядок истории должен быть -> task2 -> task3");
         Assertions.assertEquals(task3, history.get(1), "Порядок истории должен быть -> task2 -> task3");
-    } //+
+    }
 
     @Test
     public void deleteInHistoryMiddleTask() {
@@ -85,7 +85,7 @@ public class HistoryManagerTest {
 
         Assertions.assertEquals(task1, history.get(0), "Порядок истории должен быть -> task1 -> task3");
         Assertions.assertEquals(task3, history.get(1), "Порядок истории должен быть -> task1 -> task3");
-    } //+
+    }
 
     @Test
     public void deleteInHistoryLastTask() {
@@ -108,7 +108,7 @@ public class HistoryManagerTest {
 
         Assertions.assertEquals(task1, history.get(0), "Порядок истории должен быть -> task1 -> task2");
         Assertions.assertEquals(task2, history.get(1), "Порядок истории должен быть -> task1 -> task2");
-    } //+
+    }
 
     @Test
     public void emptyHistory() {

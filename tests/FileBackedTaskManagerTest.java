@@ -46,7 +46,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
         Assertions.assertEquals(0, fileBackedTasksManager.getHistory().size()
                 , "Список истории должен быть пуст");
 
-    } //+
+    }
 
     @Test
     public void saveAndExtractionFileBackedTasksManagerTest() {
@@ -81,7 +81,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
                 , "Список подзадач должен быть пуст");
         Assertions.assertEquals(0, fileBackedTasksManager2.getHistory().size()
                 , "Список истории должен быть пуст");
-    } //+
+    }
 
     @Test
     public void FileBackedTasksManagerTest() {
@@ -155,5 +155,5 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
                 , "Задача не удалилась по идентификатору");
         Assertions.assertEquals(0, fileBackedTasksManager.showAllEpic().size()
                 , "Эпик не удалился по идентификатору");
-    } //+
+    }
 }

@@ -2,8 +2,8 @@ package interfaces;
 
 import models.Task;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CustomLinkedList {
 
@@ -67,11 +67,15 @@ public class CustomLinkedList {
             } else {
                 node.prev.next = null;
             }
-        } else if (node != head & node != tail) {
+        } /*else if (node != head & node != tail) {
             return;
-        } else {
-            node.next.prev = node.prev;
-            node.prev.next = node.next;
+        }*/ else {
+            if (node.next != null & node.prev != null) {
+        node.next.prev = node.prev;
+    }
+            if (node.prev != null) {
+                node.prev.next = node.next;
+            }
         }
     }
 

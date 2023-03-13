@@ -1,11 +1,2 @@
-id,type,name,status,description,epic
-1,TASK,t1,NEW,t1
-2,TASK,t2,IN_PROGRESS,t2
-3,TASK,t3,NEW,t3
-4,EPIC,e1,IN_PROGRESS,e1
-5,EPIC,e2,DONE,e2
-6,SUBTASK,s1,IN_PROGRESS,s1,4
-7,SUBTASK,s2,NEW,s2,4
-8,SUBTASK,s3,DONE,s3,5
+id,type,name,status,description,epic,duration,startTime,endTime
 
-1,3,5,7,2,4,6,8

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -32,7 +32,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         test.deleteAllTask();
 
         assertEquals(0, test.showAllTask().size(), "Задачи не удалились");
-    } //+
+    }
 
     @Test
     public void deleteAllEpicTest() {
@@ -55,7 +55,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(0, test.showAllEpic().size(), "Эпики не удалились");
         assertEquals(0, test.showAllSubtask().size(), "Подзадачи эпиков не удалились");
-    } //+
+    }
 
     @Test
     public void deleteAllSubtaskTest() {
@@ -74,7 +74,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         test.deleteAllSubtask();
 
         assertEquals(0, test.showAllSubtask().size(), "Подзадачи не удалились");
-    } //+
+    }
 
     @Test
     public void showTaskByIdTest() {
@@ -90,7 +90,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertNotEquals(task, test.showTaskById(0), "Задаче присвоен неверный идентификатор");
         assertEquals(task2, test.showTaskById(task2.getTaskId()), "Задача не найдена");
         Assertions.assertNotEquals(task2, test.showTaskById(1), "Задаче присвоен неверный идентификатор");
-    } //+
+    }
 
     @Test
     public void showEpicByIdTest() {
@@ -99,7 +99,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(test.showEpicById(epic.getTaskId()), epic, "Задача не найдена");
         Assertions.assertNotEquals(test.showTaskById(0), epic, "Задаче присвоен неверный идентификатор");
-    } //+
+    }
 
     @Test
     public void showSubtaskByIdTest() {
@@ -119,7 +119,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertNotEquals(subtask, test.showTaskById(0), "Задаче присвоен неверный идентификатор");
         assertEquals(subtask, test.showSubtaskById(subtask.getTaskId()), "Задача не найдена");
         Assertions.assertNotEquals(subtask, test.showTaskById(0), "Задаче присвоен неверный идентификатор");
-    } //+
+    }
 
     @Test
     public void newTaskTest() {
@@ -138,7 +138,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertNotNull(tasks, "Задачи не возвращаются");
         assertEquals(1, tasks.size(), "Неверное кол-во задач");
         assertEquals(task, tasks.get(0), "Задачи не совпадают");
-    } //+
+    }
 
     @Test
     public void newEpicTest() {
@@ -156,7 +156,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, epics.size(), "Неверное кол-во эпиков");
         assertEquals(epic, epics.get(0), "Эпики не совпадают");
 
-    } //+
+    }
 
     @Test
     public void newSubtaskTest() {
@@ -178,7 +178,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertNotNull(subtasks, "Подзадачи не возвращаются");
         assertEquals(1, subtasks.size(), "Неверное кол-во подзадач");
         assertEquals(subtask, subtasks.get(0), "Эпики не совпадают");
-    } //+
+    }
 
     @Test
     public void updateTaskTest() {
@@ -208,7 +208,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertNotEquals(task.getTaskStatus(), testTask.getTaskStatus()
                 , "Статус задачи не обновился");
 
-    } //+
+    }
 
     @Test
     public void updateEpicTest() {
@@ -237,7 +237,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         Assertions.assertNotEquals(epic.getTaskStatus(), testEpic.getTaskStatus()
                 , "Статус эпика не обновился");
-    } //
+    }
 
     @Test
     public void updateSubtaskTest() {
@@ -271,7 +271,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         Assertions.assertNotEquals(subtask.getTaskStatus(), testSubtask.getTaskStatus()
                 , "Статус подзадачи не обновился");
-    } //+
+    }
 
     @Test
     public void deleteTaskIdTest() {
@@ -281,7 +281,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         test.deleteTaskId(1);
 
         assertEquals(0, test.showAllTask().size(), "Задача не удалилась");
-    } //+
+    }
 
     @Test
     public void deleteEpicIdTest() {
@@ -298,7 +298,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(0, test.showAllEpic().size(), "Эпик не удалился");
         assertEquals(0, test.showAllSubtask().size(), "Подзадачи эпика не удалились");
-    } //+
+    }
 
     @Test
     public void deleteSubtaskIdTest() {
@@ -311,7 +311,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         test.deleteSubtaskId(2);
 
         assertEquals(0, test.showAllSubtask().size(), "Подзадача не удалилась");
-    } //+
+    }
 
     @Test
     public void showAllSubtaskInEpicTest() {
@@ -334,7 +334,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(subtaskList, test.showAllSubtaskInEpic(1)
                 , "Подзадачи не закреплены за эпиком");
-    } //+
+    }
 
     @Test
     public void taskStatus() {
@@ -350,7 +350,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task.setTaskStatus(TaskStatus.DONE);
 
         assertEquals(TaskStatus.DONE, task.getTaskStatus());
-    } //+
+    }
 
     @Test
     public void statusEpicTaskWithEmptySubtaskList() {
@@ -359,7 +359,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         int epicID = epic.getTaskId();
 
         assertEquals(TaskStatus.NEW, test.showEpicById(epicID).getTaskStatus());
-    } //+
+    }
 
     @Test
     public void statusEpicTaskWithAllSubtaskStatusIsNew() {
@@ -375,7 +375,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(TaskStatus.NEW, test.showEpicById(epicID).getTaskStatus()
                 , "Статус задачи неверный");
-    } //+
+    }
 
     @Test
     public void statusEpicTaskWithAllSubtaskStatusIsDone() {
@@ -391,7 +391,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(TaskStatus.DONE, test.showEpicById(epicID).getTaskStatus()
                 , "Статус задачи неверный");
-    } //+
+    }
 
     @Test
     public void statusEpicTaskWithSubtaskStatusIsDoneAndNew() {
@@ -407,7 +407,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(TaskStatus.IN_PROGRESS, test.showEpicById(epicID).getTaskStatus()
                 , "Статус задачи неверный");
-    } //+
+    }
 
     @Test
     public void statusEpicTaskWithAllSubtaskStatusInProgress() {
@@ -425,7 +425,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(TaskStatus.IN_PROGRESS, test.showEpicById(epicID).getTaskStatus()
                 , "Статус задачи неверный");
-    } //+
+    }
 
     @Test
     public void subtaskStatus() {
@@ -444,7 +444,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subtask.setTaskStatus(TaskStatus.DONE);
 
         assertEquals(TaskStatus.DONE, subtask.getTaskStatus());
-    } //+
+    }
 
     @Test
     public void containsEpicWithNewSubtask() {
@@ -475,5 +475,5 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 , "Id эпика, к которому относится подзадача - неверный");
         Assertions.assertNotEquals(epic2, test.showEpicById(idSubtask2.getSubtaskEpicId())
                 , "Id эпика, к которому относится подзадача - неверный");
-    } //+
+    }
 }

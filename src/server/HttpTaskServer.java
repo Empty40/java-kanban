@@ -1,12 +1,11 @@
 package server;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import managers.FileBackedTasksManager;
-import managers.InMemoryTaskManager;
 import models.Epic;
 import models.Subtask;
 import models.Task;
@@ -17,10 +16,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-
-import com.google.gson.Gson;
-import models.TaskStatus;
 
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -380,31 +375,3 @@ public class HttpTaskServer {
         }
     }
 }
-
-     /* 1 - get task = GET HashMap ???
-        2 - get epic = GET HashMap ???
-        3 - get sub = GET HashMap  ???
-
-        4 - showAllTask = GET +
-        5 - showAllEpic = GET +
-        6 - showAllSub = GET
-
-        7 - DeleteAllTask = DELETE +
-        8 - DeleteAllEpic = DELETE +
-        9 - DeleteAllSub = DELETE
-
-        10 - ShowTaskById = GET +
-        11 - ShowEpicById = GET +
-        12 - ShowSubById = GET
-
-        13 - newTask = POST +
-        14 - newEpic = POST +
-        15 - newSub = POST
-
-        16 - updateTask = POST +
-        17 - updateEpic = POST +
-        18 - updateSub = POST
-
-        19 - DeleteTaskById = DELETE +
-        20 - DeleteEpicById = DELETE +
-        21 - DeleteSubById = DELETE      */
