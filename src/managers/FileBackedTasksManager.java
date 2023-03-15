@@ -1,14 +1,13 @@
 package managers;
 
 import exceptions.ManagerSaveException;
-
 import interfaces.HistoryManager;
-
 import models.*;
 
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
@@ -30,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileBackedTasksManager.fromString(file);
         }
         return fileBackedTasksManager;
-    } //+
+    }
 
     private void save() {
         try {
@@ -56,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи в файл:" + file, e);
         }
-    } //+
+    }
 
     static String historyToString(HistoryManager manager) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -69,7 +68,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             stringBuilder.setLength(stringBuilder.length() - 1);
         }
         return stringBuilder.toString();
-    } //+
+    }
 
     static List<Integer> historyFromString(String value) {
         List<Integer> idList = new ArrayList<>();
@@ -83,7 +82,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return idList;
 
-    } //+
+    }
 
     private void addTaskInHistoryManager(List<Integer> arraysTask) {
         for (Integer taskId : arraysTask) {
@@ -95,15 +94,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 historyManager.add(subtaskList.get(taskId));
             }
         }
-    } //+
+    }
 
     public void fromString(File file) {
         List<Task> taskArrayList = new ArrayList<>();
         List<Epic> epicArrayList = new ArrayList<>();
         List<Subtask> subtaskArrayList = new ArrayList<>();
-        try {
-            FileReader fl = new FileReader(file);
-            BufferedReader br = new BufferedReader(fl);
+        try (FileReader fl = new FileReader(file); BufferedReader br = new BufferedReader(fl)) {
             while (br.ready()) {
                 String line = br.readLine();
                 if (title.equals(line)) {
@@ -173,7 +170,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (Subtask subtaskToAdd : subtaskArrayList) {
             newSubtask(subtaskToAdd);
         }
-    } //+
+    }
 
     public String toString(Task task) {
         LocalDateTime taskStartTime = task.getStartTime();
@@ -186,7 +183,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.getTaskStatus() + "," + task.getTaskDescription() + "," + task.getSubtaskEpicId() + ","
                     + task.getDuration();
         }
-    } //+
+    }
 
     public void newTask(Task task) {
         super.newTask(task);

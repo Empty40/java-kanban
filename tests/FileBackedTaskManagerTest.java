@@ -84,7 +84,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
     }
 
     @Test
-    public void FileBackedTasksManagerTest() {
+    public void fileBackedTasksManagerTest() {
         if (file.canRead()) {
             file.delete();
             try {
